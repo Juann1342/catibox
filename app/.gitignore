@@ -1,0 +1,18 @@
+# Archivos de compilación
+/build/
+*.apk
+*.ap_
+
+# Archivos de Android Studio
+/.idea/
+/*.iml
+/.gradle/
+/local.properties
+
+# Archivos de logs y caches
+*.log
+*.tmp
+
+# Archivos generados por el sistema
+.DS_Store
+Thumbs.db

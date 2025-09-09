@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
+    tools:context=".MainMenuActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <!-- Logo o nombre del juego -->
+    <TextView
+        android:id="@+id/gameTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CATIBOX"
+        android:textColor="#FFD700"
+        android:textSize="64sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:shadowColor="#000000"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="8" />
+
+    <!-- Botón START -->
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:text="START"
+        android:textSize="28sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_start"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp" />
+
+    <TextView
+        android:id="@+id/tvYourHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your High Score: 0"
+        android:textSize="24sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="50dp"/>
+    <TextView
+        android:id="@+id/tvYourLongestStreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Longest Streak: 0"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="32dp"
+        android:layout_gravity="center_horizontal"/>
+
+
+
+
+
+    <!-- Opcional: botón de configuración -->
+  <!--  <Button
+        android:id="@+id/settingsButton"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="SETTINGS"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_start"
+        android:layout_below="@id/startButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>-->
+</LinearLayout>
