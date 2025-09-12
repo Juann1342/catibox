@@ -98,7 +98,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Niveles ---
     private var level = 1
     private var catsSpawned = 0
-    private val catsPerLevel = listOf(10, 15, 20, 25, Int.MAX_VALUE) // nivel 5 sin límite
+    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26, Int.MAX_VALUE) // nivel 10 sin límite
     private var levelTransition = false
     private var levelTransitionTimer = 0
 
@@ -116,8 +116,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     // --- Background / Grass per level (crossfade) ---
     // resource names per level (we'll resolve ids at runtime; fallback to default if missing)
-    private val backgroundNames = listOf("background", "background2", "background3", "background4", "background5")
-    private val grassNames = listOf("grass", "grass2", "grass3", "grass4", "grass5")
+    private val backgroundNames = listOf("background", "background2", "background3", "background4", "background5","background6", "background7", "background8", "background9", "background10")
+    private val grassNames = listOf("grass", "grass2", "grass3", "grass4", "grass5","grass6", "grass7", "grass8", "grass9", "grass10")
 
     private var currentBackground: Bitmap? = null
     private var nextBackground: Bitmap? = null
@@ -142,7 +142,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var initialLives = 5
     // Vidas iniciales del jugador al comenzar la partida.
 
-    private var initialSpawnInterval = 40
+    private var initialSpawnInterval = 60
     // Intervalo base de aparición de gatos (en frames).
     // A menor número → más gatos aparecen más rápido.
 
@@ -153,7 +153,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Incremento progresivo de dificultad cada vez que se supera un umbral de score.
     // Ejemplo: más velocidad o menor spawn interval.
 
-    private var minSpawnInterval = 20
+    private var minSpawnInterval = 30
     // Intervalo mínimo permitido entre spawns.
     // Evita que el juego se vuelva imposible (demasiados gatos juntos).
 
@@ -161,7 +161,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var nextScoreThreshold = 50
     // Próximo puntaje en el que se aplicará un incremento de dificultad.
 
-    private val scoreThresholdStep = 50
+    private val scoreThresholdStep = 100
     // Cada cuántos puntos aumentar la dificultad.
     // Ejemplo: 50, 100, 150, etc.
 
@@ -175,11 +175,22 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Evita que dos gatos aterricen al mismo tiempo y sea imposible atraparlos.
 
     private val levelDifficulty = listOf(
-        Pair(1f, 50), // nivel 1: velocidad base x1, intervalo 50 frames
-        Pair(1.1f, 45), // nivel 2: más rápido, menos intervalo
-        Pair(1.2f, 40), // nivel 3
-        Pair(1.3f, 35), // nivel 4
-        Pair(1.4f, 30)  // nivel 5+
+        Pair(1f, 90), // nivel 1: velocidad base x1, intervalo 90 frames
+        Pair(1.05f, 80), // nivel 2: más rápido, menos intervalo
+        Pair(1.1f, 75), // nivel 3
+        Pair(1.15f, 70), // nivel 4
+        Pair(1.2f, 65),  // nivel 5
+        Pair(1.25f, 60),  // nivel 6
+        Pair(1.3f, 55),  // nivel 7
+        Pair(1.35f, 50),  // nivel 8
+        Pair(1.4f, 45),  // nivel 9
+        Pair(1.44f, 40),  // nivel 10+
+
+
+
+
+
+
     )
     
 
@@ -523,8 +534,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     }
 
                 // subir dificultad cada 50 pts
-
-
 // aplicar incremento por score sólo si alcanzamos el siguiente umbral
                 if (score >= nextScoreThreshold) {
                     // calcular cuántos umbrales hemos pasado (por si saltaste más de uno)
