@@ -382,11 +382,13 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         player?.update()
         frameCount++
 
-        // --- Spawning de gatos controlado por nivel ---
+// --- Spawning de gatos controlado por nivel ---
         if (frameCount % spawnInterval == 0 && catsSpawned < catsPerLevel[level - 1]) {
-            spawnCat()
-            catsSpawned++
+            // spawnCat ahora devuelve true si realmente añadió un gato
+            val spawned = spawnCat()
+            if (spawned) catsSpawned++
         }
+
 
         // --- Globo + Bota ---
         val balloonWidth = (screenWidth / BALLOON_WIDTH_RATIO).toInt()
@@ -737,55 +739,64 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         if (SoundManager.isMuted) backgroundPlayer?.setVolume(0f, 0f)
     }
 
-    private fun spawnCat() {
+    /**
+     * Intenta crear y añadir un gato. Devuelve true si efectivamente se creó y añadió.
+     * Implementa hasta N intentos para encontrar una posición válida (no conflictiva).
+     */
+    private fun spawnCat(): Boolean {
+        val maxAttempts = 6 // número de posiciones distintas a probar antes de renunciar
         val baseWidth = (screenWidth / CAT_BASE_RATIO).toInt()
-        val catWidth = (baseWidth * (1f - difficultyMultiplier * 0.05f)).toInt().coerceAtLeast(baseWidth / 2)
-        val catHeight = catWidth
-        val xPos = (0..(screenWidth - catWidth)).random().toFloat()
-        val startY = -catHeight.toFloat()
 
-        // calcular frames estimados hasta llegar al suelo (coordenada suelo ~ player Y o screenHeight - some margin)
-        val groundY = screenHeight.toFloat() - /* margen si tienes */ 100f // ajustar igual que player Y margin
-        val pixelsToTravel = (groundY - startY).coerceAtLeast(1f)
+        repeat(maxAttempts) { attempt ->
+            val catWidth = (baseWidth * (1f - difficultyMultiplier * 0.05f)).toInt().coerceAtLeast(baseWidth / 2)
+            val catHeight = catWidth
+            val xPos = (0..(screenWidth - catWidth)).random().toFloat()
+            val startY = -catHeight.toFloat()
 
-        // asumimos velocidad = CAT_BASE_FALL_SPEED * difficultyMultiplier
-        val fallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier
-        val estimatedFramesToLand = (pixelsToTravel / fallSpeed).toInt()
+            // calcular frames estimados hasta llegar al suelo
+            val groundY = screenHeight.toFloat() - 100f
+            val pixelsToTravel = (groundY - startY).coerceAtLeast(1f)
 
-        // calcular frame absoluto estimado
-        val estimatedLandingFrame = frameCount + estimatedFramesToLand
+            val fallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier
+            val estimatedFramesToLand = (pixelsToTravel / fallSpeed).toInt()
+            val estimatedLandingFrame = frameCount + estimatedFramesToLand
 
-        // comprobar si existe otro gato con landing cercano
-        var conflict = false
-        for (c in cats) {
-            // si tus Cat tienen y/height actuales usamos eso para estimar su landing frame
-            val remainingPixels = (groundY - c.y).coerceAtLeast(1f)
-            val cFallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier // si se usa la misma
-            val cFramesToLand = (remainingPixels / cFallSpeed).toInt()
-            val cLandingFrame = frameCount + cFramesToLand
-            if (kotlin.math.abs(cLandingFrame - estimatedLandingFrame) < minLandingGapFrames) {
-                conflict = true
-                break
+            // comprobar si existe otro gato con landing cercano
+            var conflict = false
+            for (c in cats) {
+                val remainingPixels = (groundY - c.y).coerceAtLeast(1f)
+                val cFallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier
+                val cFramesToLand = (remainingPixels / cFallSpeed).toInt()
+                val cLandingFrame = frameCount + cFramesToLand
+                if (kotlin.math.abs(cLandingFrame - estimatedLandingFrame) < minLandingGapFrames) {
+                    conflict = true
+                    break
+                }
             }
+
+            if (conflict) {
+                // intentar otra posición
+                return@repeat
+            }
+
+            // si llegamos aquí, no hay conflicto: crear el gato y salir
+            val catBitmapScaled = Bitmap.createScaledBitmap(catBitmap, catWidth, catHeight, false)
+            cats.add(
+                Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
+                    SoundManager.playSound("catAngry")
+                    streak = 0
+                    player?.state = PlayerState.SAD
+                    lives--
+                    player?.stateTimer = 60
+                }
+            )
+            return true
         }
 
-        if (conflict) {
-            // si hay conflicto, no hacemos spawn ahora; simplemente salimos.
-            // Esto reducirá la tasa de spawn en momentos críticos.
-            return
-        }
-
-        val catBitmapScaled = Bitmap.createScaledBitmap(catBitmap, catWidth, catHeight, false)
-        cats.add(
-            Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
-                SoundManager.playSound("catAngry")
-                streak = 0 // reiniciar racha
-                player?.state = PlayerState.SAD
-                lives--
-                player?.stateTimer = 60 // 1 segundo a 60fps
-            }
-        )
+        // si no se pudo spawnear tras varios intentos, devolver false
+        return false
     }
+
 
 
     fun pauseThread() { thread?.setRunning(false) }
