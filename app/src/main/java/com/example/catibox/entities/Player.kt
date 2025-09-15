@@ -1,4 +1,4 @@
-package com.example.catibox
+package com.example.catibox.entities
 
 
 
