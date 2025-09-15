@@ -169,13 +169,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Intervalo mínimo permitido entre spawns.
     // Evita que el juego se vuelva imposible (demasiados gatos juntos).
 
-    // --- Control de incrementos de dificultad ---
-    private var nextScoreThreshold = 50
-    // Próximo puntaje en el que se aplicará un incremento de dificultad.
+//dificultad por gato
+    private var difficultyIncreasePerCat = 0.05f
+    //cada cuantos gatos aumenta
+    private var spawnIntervalDecreasePerCat = 1
 
-    private val scoreThresholdStep = 100
-    // Cada cuántos puntos aumentar la dificultad.
-    // Ejemplo: 50, 100, 150, etc.
 
     // --- Control de llegadas simultáneas ---
     private val CAT_BASE_FALL_SPEED = 6f
@@ -187,16 +185,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Evita que dos gatos aterricen al mismo tiempo y sea imposible atraparlos.
 
     private val levelDifficulty = listOf(
-        Pair(1f, 90), // nivel 1: velocidad base x1, intervalo 90 frames
-        Pair(1.05f, 80), // nivel 2: más rápido, menos intervalo
-        Pair(1.1f, 75), // nivel 3
-        Pair(1.15f, 70), // nivel 4
-        Pair(1.2f, 65),  // nivel 5
-        Pair(1.25f, 60),  // nivel 6
-        Pair(1.3f, 55),  // nivel 7
-        Pair(1.35f, 50),  // nivel 8
-        Pair(1.4f, 45),  // nivel 9
-        Pair(1.44f, 40),  // nivel 10+
+        Pair(1f, 75), // nivel 1: velocidad base x1, intervalo 75 frames. (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(1.8f, 70), // nivel 2: más rápido, menos intervalo
+        Pair(2.5f, 65), // nivel 3
+        Pair(3.2f, 60), // nivel 4
+        Pair(3.8f, 55),  // nivel 5
+        Pair(4.5f, 50),  // nivel 6
+        Pair(5.2f, 45),  // nivel 7
+        Pair(6f, 40),  // nivel 8
+        Pair(6.8f, 35),  // nivel 9
+        Pair(8f, 30),  // nivel 10+
 
     )
 
@@ -296,7 +294,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         lives = initialLives
         difficultyMultiplier = initialDifficultyMultiplier
         spawnInterval = initialSpawnInterval
-        nextScoreThreshold = scoreThresholdStep
 
 
         // Initialize current background/grass from the default (keeps compatibility)
@@ -538,30 +535,20 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 iterator.remove()
             } else if (cat.isCaught(player!!, previousY)) {
                 iterator.remove()
+
                 val points = if (doublePointsActive) 20 else 10
                 score += points
                 SoundManager.playSound("catHappy")
-                    // aumentar racha
-                    streak++
-                    if (streak > maxStreak) {
-                        maxStreak = streak
-                    }
 
-                // subir dificultad cada 50 pts
-// aplicar incremento por score sólo si alcanzamos el siguiente umbral
-                if (score >= nextScoreThreshold) {
-                    // calcular cuántos umbrales hemos pasado (por si saltaste más de uno)
-                    val steps = score / scoreThresholdStep
-                    // aplicar incrementos en pasos hasta adecuar nextScoreThreshold
-                    // (alternativa: aplicar sólo un paso y aumentar nextScoreThreshold += scoreThresholdStep)
-                    difficultyMultiplier += difficultyIncreasePerScore * steps
-                    spawnInterval = (spawnInterval - 5 * steps).coerceAtLeast(minSpawnInterval)
-                    // fijar el siguiente umbral (simple)
-                    nextScoreThreshold = (steps + 1) * scoreThresholdStep
-                }
+                // aumentar racha
+                streak++
+                if (streak > maxStreak) maxStreak = streak
 
-
+                // ---dificultad por gato ---
+                difficultyMultiplier += difficultyIncreasePerCat
+                spawnInterval = (spawnInterval - spawnIntervalDecreasePerCat).coerceAtLeast(minSpawnInterval)
             }
+
         }
 
         // Si ya terminó el nivel: iniciar transición (pausa reducida)
