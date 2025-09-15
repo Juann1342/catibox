@@ -41,6 +41,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         var UFO_SCORE_INTERVAL = 310
     }
     private lateinit var hud: HUD
+    private lateinit var backgroundPlayer: MediaPlayer
+
 
     // Bitmaps
     private lateinit var playerBitmap: Bitmap
@@ -62,6 +64,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private lateinit var bootBitmap: Bitmap
     private lateinit var fruitBitmap: Bitmap
     private lateinit var starBitmap: Bitmap
+
+    // GameView
+    var isPaused = false
+    var isMuted = false
+
 
     // Thread / player
     private var thread: GameThread? = null
@@ -89,7 +96,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var spawnInterval = 60
 
     // Música de fondo
-    private var backgroundPlayer: MediaPlayer? = null
 
     // Estado game over
     var gameOver = false
@@ -201,22 +207,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     init {
         holder.addCallback(this)
         isFocusable = true
-        enableFullscreen()
         SoundManager.init(context)
         initIcons()
     }
 
-    private fun enableFullscreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            windowInsetsController?.let { controller ->
-                controller.hide(android.view.WindowInsets.Type.statusBars() or android.view.WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior =
-                    android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            systemUiVisibility = SYSTEM_UI_FLAG_FULLSCREEN or SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        }
-    }
+
 
     private fun initIcons() {
         muteIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_mute)!!, muteButtonSize.toInt(), muteButtonSize.toInt())
@@ -242,6 +237,18 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         screenWidth = width
         screenHeight = height
+
+        hud.onPauseToggle = {
+            isPaused = !isPaused   // invertir valor real
+            hud.isPaused = isPaused // actualizar HUD para que dibuje correctamente
+        }
+        hud.onMuteToggle = {
+            isMuted = !isMuted        // invertir estado real
+            hud.isMuted = isMuted     // actualizar HUD para mostrar icono correcto
+            toggleMute()              // activar/desactivar sonido
+        }
+
+
 
         playerBitmap = BitmapFactory.decodeResource(resources, R.drawable.player)
         playerBonusBitmap = BitmapFactory.decodeResource(resources,R.drawable.player_bonus)
@@ -355,7 +362,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
     fun update() {
-        if (player == null || gameOver) return
+        if (player == null || gameOver || isPaused) return
 
         // --- Transición de nivel ---
         if (levelTransition) {
@@ -707,32 +714,30 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (hud.handleTouch(x, y)) return true
-
         val x = event.x
         val y = event.y
 
+        // Primero, que el HUD maneje el toque (mute/pause)
+        if (hud.handleTouch(x, y, event)) return true
+
+        // Solo si no es game over
         if (!gameOver) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    if (muteButtonRect.contains(x, y) && event.action == MotionEvent.ACTION_DOWN) {
-                        toggleMute()
-                        return true
+                    // Movimiento del jugador (solo si no tocamos un botón)
+                    if (!hud.isTouchingButton(x, y)) {
+                        player?.x = x - player!!.width / 2f
+                        if (player!!.x < 0f) player!!.x = 0f
+                        if (player!!.x + player!!.width > screenWidth.toFloat())
+                            player!!.x = screenWidth.toFloat() - player!!.width
                     }
-                    player?.x = x - player!!.width / 2f
-                    if (player!!.x < 0f) player!!.x = 0f
-                    if (player!!.x + player!!.width > screenWidth.toFloat()) player!!.x = screenWidth.toFloat() - player!!.width
                 }
             }
         }
         return true
     }
 
-    private fun toggleMute() {
-        SoundManager.toggleMute()
-        if (SoundManager.isMuted) backgroundPlayer?.setVolume(0f, 0f)
-        else backgroundPlayer?.setVolume(1f, 1f)
-    }
+
 
     fun setBackgroundPlayer(player: MediaPlayer) {
         backgroundPlayer = player
@@ -797,6 +802,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         return false
     }
 
+    fun toggleMute() {
+        SoundManager.toggleMute() // pausa/reanuda efectos
+
+        // controlar música de fondo
+        if (::backgroundPlayer.isInitialized) {
+            if (SoundManager.isMuted) backgroundPlayer.setVolume(0f, 0f)
+            else backgroundPlayer.setVolume(1f, 1f)
+        }
+    }
 
 
     fun pauseThread() { thread?.setRunning(false) }

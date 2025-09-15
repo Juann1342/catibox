@@ -3,7 +3,9 @@ package com.example.catibox
 import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
 class GameActivity : AppCompatActivity() {
@@ -18,7 +20,7 @@ class GameActivity : AppCompatActivity() {
         gameView = GameView(this)
 
         // Configuramos música de fondo
-        backgroundMusic = MediaPlayer.create(this, R.raw.background_music) // reemplaza con tu música
+        backgroundMusic = MediaPlayer.create(this, R.raw.background_music)
         backgroundMusic.isLooping = true
         backgroundMusic.start()
 
@@ -26,6 +28,9 @@ class GameActivity : AppCompatActivity() {
         gameView.setBackgroundPlayer(backgroundMusic)
 
         setContentView(gameView)
+
+        // Activar fullscreen
+        enableFullscreen()
 
         // Observamos si termina el juego
         gameView.onGameOverListener = {
@@ -39,6 +44,25 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    private fun enableFullscreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.let { controller ->
+                controller.hide(
+                    android.view.WindowInsets.Type.statusBars() or
+                            android.view.WindowInsets.Type.navigationBars()
+                )
+                controller.systemBarsBehavior =
+                    android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         gameView.pauseThread()
@@ -49,6 +73,7 @@ class GameActivity : AppCompatActivity() {
         super.onResume()
         backgroundMusic.start()
         gameView.resumeThread()
+        enableFullscreen() // <- por si se pierde fullscreen al volver
     }
 
     override fun onDestroy() {

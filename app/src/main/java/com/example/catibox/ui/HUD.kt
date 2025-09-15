@@ -35,9 +35,23 @@ class HUD(private val context: Context) {
     private lateinit var muteIcon: Bitmap
     private lateinit var unmuteIcon: Bitmap
 
+    private val pauseButtonRect = RectF()
+    private val pauseButtonSize = 100f
+    private lateinit var pauseIcon: Bitmap
+    private lateinit var resumeIcon: Bitmap
+    var isPaused = false
+    var isMuted = false
+
+
+    // Callbacks para GameView
+    var onPauseToggle: (() -> Unit)? = null
+    var onMuteToggle: (() -> Unit)? = null
+
     fun initIcons() {
         muteIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_mute)!!, muteButtonSize.toInt(), muteButtonSize.toInt())
         unmuteIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_unmute)!!, muteButtonSize.toInt(), muteButtonSize.toInt())
+        pauseIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_pause)!!, pauseButtonSize.toInt(), pauseButtonSize.toInt())
+        resumeIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_play)!!, pauseButtonSize.toInt(), pauseButtonSize.toInt())
     }
 
     private fun drawableToBitmap(drawable: Drawable, width: Int, height: Int): Bitmap {
@@ -49,7 +63,7 @@ class HUD(private val context: Context) {
     }
 
     fun draw(canvas: Canvas, screenWidth: Int) {
-        // Score
+        // Score y Streak
         canvas.drawText("Score: $score", 30f, 150f, paint)
         canvas.drawText("Streak: $streak  (Max: $maxStreak)", 30f, 220f, streakPaint)
 
@@ -60,57 +74,98 @@ class HUD(private val context: Context) {
         val livesY = 150f
         canvas.drawText(livesText, livesX, livesY, livesPaint)
 
-        // Mute Icon
-        val icon = if (SoundManager.isMuted) muteIcon else unmuteIcon
-        val muteX = livesX + livesTextWidth / 2 - muteButtonSize / 2
-        val muteY = livesY + 30f
-        canvas.drawBitmap(icon, muteX, muteY, null)
+        // Mute y Pause
+        val iconMute = if (SoundManager.isMuted) muteIcon else unmuteIcon
+        val muteX = livesX
+        val muteY = livesY + 40f
+        canvas.drawBitmap(iconMute, muteX, muteY, null)
         muteButtonRect.set(muteX, muteY, muteX + muteButtonSize, muteY + muteButtonSize)
 
-        // Game Over overlay
+        val iconPause = if (isPaused) resumeIcon else pauseIcon
+        val pauseX = muteButtonRect.left
+        val pauseY = muteButtonRect.bottom + 20f
+        canvas.drawBitmap(iconPause, pauseX, pauseY, null)
+        pauseButtonRect.set(pauseX, pauseY, pauseX + pauseButtonSize, pauseY + pauseButtonSize)
+
+        // Overlay Game Over
         if (gameOver) {
-            val overlay = Paint().apply { color = Color.argb(180, 0, 0, 0) }
+            val overlay = Paint().apply { color = Color.argb(200, 0, 0, 0) }
             canvas.drawRect(0f, 0f, screenWidth.toFloat(), canvas.height.toFloat(), overlay)
+            val textPaint = Paint().apply {
+                color = Color.RED
+                textSize = 150f
+                textAlign = Paint.Align.CENTER
+                isFakeBoldText = true
+            }
+            canvas.drawText("GAME OVER", screenWidth / 2f, canvas.height / 2f, textPaint)
         }
 
-        // Level transition message
+        // Level transition
         if (levelTransition) {
             val total = 90f
             val elapsed = (total - levelTransitionTimer.toFloat()).coerceAtLeast(0f)
             val progress = (elapsed / total).coerceIn(0f, 1f)
-
-            val alpha = when {
-                progress < 0.3f -> (progress / 0.3f * 255).toInt()
-                progress > 0.7f -> ((1f - progress) / 0.3f * 255).toInt()
-                else -> 255
-            }.coerceIn(0, 255)
-            levelPaint.alpha = alpha
-
-            val easeOut = 1f - (1f - progress) * (1f - progress)
-            val baseScale = 0.85f
-            val scaleRange = 0.25f
-            val scale = baseScale + scaleRange * easeOut
-
+            levelPaint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
             val cx = screenWidth / 2f
             val cy = canvas.height / 2f
+            canvas.drawText("LEVEL $level", cx, cy, levelPaint)
+        }
 
-            canvas.save()
-            canvas.translate(cx, cy)
-            canvas.scale(scale, scale)
-            canvas.drawText("LEVEL $level", 0f, 0f, levelPaint)
-            canvas.restore()
+        // Pausa visible
+        if (isPaused && !gameOver) {
+            val pausePaint = Paint().apply {
+                color = Color.argb(180, 0, 0, 0)
+                textSize = 100f
+                textAlign = Paint.Align.CENTER
+                isFakeBoldText = true
+            }
+            canvas.drawText("PAUSED", screenWidth / 2f, canvas.height / 2f, pausePaint)
         }
     }
 
     fun handleTouch(x: Float, y: Float): Boolean {
         if (muteButtonRect.contains(x, y)) {
             toggleMute()
+            onMuteToggle?.invoke()  // avisa a GameView
+            return true
+        }
+        if (pauseButtonRect.contains(x, y)) {
+            togglePause()
+            onPauseToggle?.invoke() // avisa a GameView
             return true
         }
         return false
     }
 
+    private fun togglePause() {
+        isPaused = !isPaused
+    }
+
     private fun toggleMute() {
         SoundManager.toggleMute()
     }
+
+    fun handleTouch(x: Float, y: Float, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_UP -> {
+                if (pauseButtonRect.contains(x, y)) {
+                    isPaused = !isPaused
+                    onPauseToggle?.invoke()
+                    return true
+                }
+                if (muteButtonRect.contains(x, y)) {
+                    isMuted = !isMuted
+                    onMuteToggle?.invoke()
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    // Método auxiliar para evitar mover jugador sobre los botones
+    fun isTouchingButton(x: Float, y: Float): Boolean {
+        return pauseButtonRect.contains(x, y) || muteButtonRect.contains(x, y)
+    }
+
 }
