@@ -2,7 +2,7 @@ package com.example.catibox.entities
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import kotlin.math.hypot
+import kotlin.random.Random
 
 class Fruit(
     var x: Float,
@@ -10,35 +10,20 @@ class Fruit(
     val width: Int,
     val height: Int,
     val bitmap: Bitmap,
-    var targetX: Float,
-    var targetY: Float,
-    private val speed: Float
+    private val speedY: Float = 8f // velocidad vertical constante hacia abajo
 ) {
-    private var vx: Float
-    private var vy: Float
+    private var speedX: Float = Random.nextFloat() * 6f - 3f // velocidad horizontal aleatoria
 
-    init {
-        val dx = targetX - x
-        val dy = targetY - y
-        val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
-        vx = dx / distance * speed
-        vy = dy / distance * speed
-    }
-
-    fun update(screenWidth: Int, screenHeight: Int) {
-        x += vx
-        y += vy
+    fun update(screenWidth: Int) {
+        x += speedX
+        y += speedY
 
         // Rebotar solo en los bordes laterales
-        if (x < 0) {
-            x = 0f
-            vx = -vx
-        }
-        if (x + width > screenWidth) {
-            x = (screenWidth - width).toFloat()
-            vx = -vx
-        }
-        // 👇 ya no rebotamos en suelo ni en techo
+        if (x < 0f) { x = 0f; speedX = -speedX }
+        if (x + width > screenWidth) { x = (screenWidth - width).toFloat(); speedX = -speedX }
+
+        // Evitar que la fruta salga por arriba
+        if (y < 0f) y = 0f
     }
 
     fun draw(canvas: Canvas) {
@@ -55,7 +40,7 @@ class Fruit(
         return x < right && x + width > left && y < bottom && y + height > top
     }
 
-    fun isOffScreen(screenWidth: Int, screenHeight: Int): Boolean {
+    fun isOffScreen(screenHeight: Int): Boolean {
         return y > screenHeight
     }
 }

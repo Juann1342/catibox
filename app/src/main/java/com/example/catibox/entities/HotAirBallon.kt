@@ -26,7 +26,5 @@ class HotAirBalloon(
         return if (fromLeft) x > screenWidth else x + width < 0
     }
 
-    fun launchSomething() {
-        // Aquí podrías agregar la lógica de lanzamiento (bombas, confeti, etc)
-    }
+
 }

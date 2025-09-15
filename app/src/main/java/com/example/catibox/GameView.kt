@@ -1,10 +1,10 @@
 package com.example.catibox
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
-import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -22,6 +22,9 @@ import com.example.catibox.entities.UFO
 import com.example.catibox.managers.SoundManager
 import com.example.catibox.ui.HUD
 import kotlin.random.Random
+import androidx.core.graphics.scale
+import androidx.core.graphics.createBitmap
+import androidx.core.content.edit
 
 class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
@@ -89,9 +92,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     private var frameCount = 0
     var score = 0
-    private val paint = Paint().apply { color = Color.WHITE; textSize = 60f; isAntiAlias = true }
     private var lives = 5
-    private val livesPaint = Paint().apply { color = Color.RED; textSize = 60f; isAntiAlias = true }
     private var difficultyMultiplier = 1f
     private var spawnInterval = 60
 
@@ -102,7 +103,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         private set
 
     // Mute button
-    private val muteButtonRect = RectF()
     private val muteButtonSize = 100f
 
     // Callback Game Over
@@ -123,14 +123,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     var planeSpawned = false
     var ufoSpawned = false
 
-    // Paint para el texto de nivel (global para no recrear en cada draw)
-    private val levelPaint = Paint().apply {
-        color = Color.YELLOW
-        textSize = 120f
-        isFakeBoldText = true
-        textAlign = Paint.Align.CENTER
-        setShadowLayer(8f, 0f, 0f, Color.BLACK)
-    }
 
     // --- Background / Grass per level (crossfade) ---
     // resource names per level (we'll resolve ids at runtime; fallback to default if missing)
@@ -149,11 +141,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Racha (streak) ---
     private var streak = 0
      var maxStreak = 0
-    private val streakPaint = Paint().apply {
-        color = Color.CYAN
-        textSize = 50f
-        isAntiAlias = true
-    }
 
     // --- Dificultad ajustable ---
     // --- Dificultad ajustable ---
@@ -167,7 +154,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var initialDifficultyMultiplier = 1f
     // Multiplicador inicial de dificultad. Puede usarse para escalar velocidades o frecuencia.
 
-    private var difficultyIncreasePerScore = 0.1f
     // Incremento progresivo de dificultad cada vez que se supera un umbral de score.
     // Ejemplo: más velocidad o menor spawn interval.
 
@@ -219,7 +205,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
     private fun drawableToBitmap(drawable: Drawable, width: Int, height: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
@@ -277,18 +263,18 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
 
-        playerBitmap = Bitmap.createScaledBitmap(playerBitmap, playerWidth, playerHeight, false)
-        grassBitmap = Bitmap.createScaledBitmap(grassBitmap, screenWidth + 100, 400, false)
-        balloonBitmap = Bitmap.createScaledBitmap(balloonBitmap, balloonWidth, balloonHeight, false)
-        planeBitmap = Bitmap.createScaledBitmap(planeBitmap, planeWidth, planeHeight, false)
-        ufoBitmap = Bitmap.createScaledBitmap(ufoBitmap, ufoWidth, ufoHeight, false)
-        bootBitmap = Bitmap.createScaledBitmap(bootBitmap, balloonWidth / 3, balloonHeight / 3, false)
-        fruitBitmap = Bitmap.createScaledBitmap(fruitBitmap, 60, 60, false)
-        starBitmap = Bitmap.createScaledBitmap(starBitmap, 60, 60, false)
-        playerBonusBitmap = Bitmap.createScaledBitmap(playerBonusBitmap, playerWidth, playerHeight, false)
-        playerSadBitmap = Bitmap.createScaledBitmap(playerSadBitmap, playerWidth, playerHeight, false)
-        playerHappyBitmap = Bitmap.createScaledBitmap(playerHappyBitmap, playerWidth, playerHeight, false)
-        playerOuchBitmap = Bitmap.createScaledBitmap(playerOuchBitmap, playerWidth, playerHeight, false)
+        playerBitmap = playerBitmap.scale(playerWidth, playerHeight, false)
+        grassBitmap = grassBitmap.scale(screenWidth + 100, 400, false)
+        balloonBitmap = balloonBitmap.scale(balloonWidth, balloonHeight, false)
+        planeBitmap = planeBitmap.scale(planeWidth, planeHeight, false)
+        ufoBitmap = ufoBitmap.scale(ufoWidth, ufoHeight, false)
+        bootBitmap = bootBitmap.scale(balloonWidth / 3, balloonHeight / 3, false)
+        fruitBitmap = fruitBitmap.scale(60, 60, false)
+        starBitmap = starBitmap.scale(60, 60, false)
+        playerBonusBitmap = playerBonusBitmap.scale(playerWidth, playerHeight, false)
+        playerSadBitmap = playerSadBitmap.scale(playerWidth, playerHeight, false)
+        playerHappyBitmap = playerHappyBitmap.scale(playerWidth, playerHeight, false)
+        playerOuchBitmap = playerOuchBitmap.scale(playerWidth, playerHeight, false)
 
         // init player
         player = Player(
@@ -304,26 +290,25 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
         // Initialize current background/grass from the default (keeps compatibility)
-        currentBackground = Bitmap.createScaledBitmap(
-            BitmapFactory.decodeResource(resources, getDrawableIdByName(backgroundNames[0])),
-            screenWidth, screenHeight, false
-        )
+        currentBackground =
+            BitmapFactory.decodeResource(resources, getDrawableIdByName(backgroundNames[0]))
+                .scale(screenWidth, screenHeight, false)
 
-        currentGrass = Bitmap.createScaledBitmap(
-            BitmapFactory.decodeResource(resources, getDrawableIdByName(grassNames[0])),
-            screenWidth + 100, 400, false
-        )
+        currentGrass = BitmapFactory.decodeResource(resources, getDrawableIdByName(grassNames[0]))
+            .scale(screenWidth + 100, 400, false)
 
         thread = GameThread(holder, this)
         thread?.setRunning(true)
         thread?.start()
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getDrawableIdByName(name: String): Int {
         val id = resources.getIdentifier(name, "drawable", context.packageName)
         return if (id != 0) id else R.drawable.background // fallback to background if not found
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun getGrassIdByName(name: String): Int {
         val id = resources.getIdentifier(name, "drawable", context.packageName)
         return if (id != 0) id else R.drawable.grass // fallback
@@ -351,10 +336,10 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // prepare nextBackground and nextGrass scaled to screen
         nextBackground = BitmapFactory.decodeResource(resources, bgId)
-        nextBackground = Bitmap.createScaledBitmap(nextBackground!!, screenWidth, screenHeight, false)
+        nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
 
         nextGrass = BitmapFactory.decodeResource(resources, grassId)
-        nextGrass = Bitmap.createScaledBitmap(nextGrass!!, screenWidth + 100, 400, false)
+        nextGrass = nextGrass!!.scale(screenWidth + 100, 400, false)
 
         // enable transitions
         backgroundTransition = true
@@ -456,13 +441,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             if (!p.hasDroppedItem) {
                 val reachedMiddle = p.x + p.width / 2f <= screenWidth / 2f
                 if (reachedMiddle) {
-                    val targetX = Random.nextInt(0, screenWidth - 60).toFloat()
-                    val targetY = Random.nextInt(100, screenHeight - 100).toFloat()
                     activeFruit = Fruit(
                         p.x + p.width / 2f - 30f,
                         p.y + p.height / 2f,
-                        60, 60, fruitBitmap,
-                        targetX, targetY, 8f
+                        70, 70, fruitBitmap,
+                         8f
                     )
                     p.hasDroppedItem = true
                 }
@@ -482,8 +465,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     return@let
                 }
             }
-            f.update(screenWidth, screenHeight)
-            if (f.isOffScreen(screenWidth, screenHeight)) activeFruit = null
+            f.update(screenWidth)
+            if (f.isOffScreen(screenHeight)) activeFruit = null
         }
 
         // --- OVNI + Estrella ---
@@ -508,8 +491,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     activeStar = Star(
                         u.x + u.width / 2f - 30f,
                         u.y + u.height / 2f,
-                        60, 60, starBitmap,
-                        screenWidth, screenHeight, 8f
+                        70, 70, starBitmap,
+                         8f
                     )
                     u.hasDroppedItem = true
                 }
@@ -531,7 +514,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 }
             }
             s.update(screenWidth, screenHeight)
-            if (s.isOffScreen(screenWidth, screenHeight)) activeStar = null
+            if (s.isOffScreen(screenHeight)) activeStar = null
         }
 
         // --- Cats ---
@@ -540,7 +523,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val cat = iterator.next()
             val previousY = cat.y
             cat.update(difficultyMultiplier, screenWidth, screenHeight, player!!)
-            if (cat.isOffScreen(screenWidth)) {
+            if (cat.isOffScreen()) {
                 iterator.remove()
             } else if (cat.isCaught(player!!, previousY)) {
                 iterator.remove()
@@ -615,11 +598,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 // Comparar y actualizar explícitamente
 
             if (score > maxScoreHist) {
-                prefs.edit().putInt("MAX_SCORE_HIST", score).apply()
+                prefs.edit { putInt("MAX_SCORE_HIST", score) }
             }
 
             if (maxStreak > maxStreakHist) {
-                prefs.edit().putInt("MAX_STREAK_HIST", maxStreak).apply()
+                prefs.edit { putInt("MAX_STREAK_HIST", maxStreak) }
             }
 
             val intent = android.content.Intent(context, GameOverActivity::class.java)
@@ -713,6 +696,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
         val y = event.y
@@ -741,7 +725,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     fun setBackgroundPlayer(player: MediaPlayer) {
         backgroundPlayer = player
-        if (SoundManager.isMuted) backgroundPlayer?.setVolume(0f, 0f)
+        if (SoundManager.isMuted) backgroundPlayer.setVolume(0f, 0f)
     }
 
     /**
@@ -785,7 +769,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             }
 
             // si llegamos aquí, no hay conflicto: crear el gato y salir
-            val catBitmapScaled = Bitmap.createScaledBitmap(catBitmap, catWidth, catHeight, false)
+            val catBitmapScaled = catBitmap.scale(catWidth, catHeight, false)
             cats.add(
                 Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
                     SoundManager.playSound("catAngry")

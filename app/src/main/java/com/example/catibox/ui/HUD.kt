@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import com.example.catibox.R
 import com.example.catibox.managers.SoundManager
+import androidx.core.graphics.createBitmap
 
 class HUD(private val context: Context) {
 
@@ -55,7 +56,7 @@ class HUD(private val context: Context) {
     }
 
     private fun drawableToBitmap(drawable: Drawable, width: Int, height: Int): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
@@ -123,27 +124,9 @@ class HUD(private val context: Context) {
         }
     }
 
-    fun handleTouch(x: Float, y: Float): Boolean {
-        if (muteButtonRect.contains(x, y)) {
-            toggleMute()
-            onMuteToggle?.invoke()  // avisa a GameView
-            return true
-        }
-        if (pauseButtonRect.contains(x, y)) {
-            togglePause()
-            onPauseToggle?.invoke() // avisa a GameView
-            return true
-        }
-        return false
-    }
 
-    private fun togglePause() {
-        isPaused = !isPaused
-    }
 
-    private fun toggleMute() {
-        SoundManager.toggleMute()
-    }
+
 
     fun handleTouch(x: Float, y: Float, event: MotionEvent): Boolean {
         when (event.action) {

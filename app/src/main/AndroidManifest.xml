@@ -28,7 +28,9 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".GameActivity" />
+        <activity
+            android:name=".GameActivity"
+        />
         <activity android:name=".GameOverActivity" />
 
 

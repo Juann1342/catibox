@@ -22,8 +22,6 @@ class Cat(
     fun update(difficultyMultiplier: Float = 1f, screenWidth: Int, screenHeight: Int, player: Player) {
         val groundOffset = 180f // mismo offset que subiste al jugador
 
-        val previousY = y // guardamos posición anterior antes de mover
-
         if (!sliding) {
             // Caída vertical
             y += baseSpeed * difficultyMultiplier
@@ -79,7 +77,7 @@ class Cat(
         return isOverlappingHorizontally && isOverlappingVertically && isFallingOntoPlayer
     }
 
-    fun isOffScreen(screenWidth: Int): Boolean {
+    fun isOffScreen(): Boolean {
         return gone
     }
 }

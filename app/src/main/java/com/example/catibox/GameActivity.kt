@@ -1,20 +1,27 @@
 package com.example.catibox
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.ActivityInfo
+import com.example.catibox.managers.SoundManager
+import androidx.core.content.edit
+
 
 class GameActivity : AppCompatActivity() {
 
     private lateinit var gameView: GameView
     private lateinit var backgroundMusic: MediaPlayer
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
 
         // Creamos GameView
         gameView = GameView(this)
@@ -79,19 +86,21 @@ class GameActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         backgroundMusic.release()
+        SoundManager.release()
+
     }
 
     // --- Función para guardar score máximo y racha máxima ---
     private fun saveHighScores(score: Int, maxStreak: Int) {
-        val prefs = getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
-        val editor = prefs.edit()
+        val prefs = getSharedPreferences("CATIBOX_PREFS",MODE_PRIVATE)
+        prefs.edit {
 
-        val highestScore = prefs.getInt("HIGH_SCORE", 0)
-        if (score > highestScore) editor.putInt("HIGH_SCORE", score)
+            val highestScore = prefs.getInt("HIGH_SCORE", 0)
+            if (score > highestScore) putInt("HIGH_SCORE", score)
 
-        val highestStreak = prefs.getInt("HIGH_STREAK", 0)
-        if (maxStreak > highestStreak) editor.putInt("HIGH_STREAK", maxStreak)
+            val highestStreak = prefs.getInt("HIGH_STREAK", 0)
+            if (maxStreak > highestStreak) putInt("HIGH_STREAK", maxStreak)
 
-        editor.apply()
+        }
     }
 }

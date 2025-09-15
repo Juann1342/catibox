@@ -1,6 +1,4 @@
 package com.example.catibox
-
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,7 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class GameOverActivity : AppCompatActivity() {
-    private var gameOverSoundId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +18,7 @@ class GameOverActivity : AppCompatActivity() {
         val maxStreak = intent.getIntExtra("MAX_STREAK", 0)
 
         // Obtener valores históricos desde SharedPreferences
-        val prefs = getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("CATIBOX_PREFS", MODE_PRIVATE)
         val highScore = prefs.getInt("MAX_SCORE_HIST", 0)
         val highStreak = prefs.getInt("MAX_STREAK_HIST", 0)
 

@@ -2,6 +2,7 @@ package com.example.catibox.entities
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import kotlin.math.hypot
 
 class Boot(
     var x: Float,
@@ -19,7 +20,7 @@ class Boot(
     init {
         val dx = targetX - x
         val dy = targetY - y
-        val distance = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
+        val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
         vx = dx / distance * speed
         vy = dy / distance * speed
     }
