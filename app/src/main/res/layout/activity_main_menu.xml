@@ -9,13 +9,13 @@
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-    <!-- Logo o nombre del juego -->
+    <!-- Logo o nombre del juego #FFD700-->
     <TextView
         android:id="@+id/gameTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CATIBOX"
-        android:textColor="#FFD700"
+        android:textColor="#C2185B"
         android:textSize="64sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"

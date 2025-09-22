@@ -4,17 +4,30 @@ plugins {
 }
 
 android {
-    namespace = "com.example.catibox"
+    namespace = "com.chifuzgames.catibox"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.catibox"
         minSdk = 21
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // --- Flavors ---
+    flavorDimensions += listOf("environment")
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationId = "com.chifuzgames.catibox.dev"
+            versionCode = 1
+            versionName = "1.0-dev"
+        }
+        create("prod") {
+            dimension = "environment"
+            applicationId = "com.chifuzgames.catibox"
+            versionCode = 1
+            versionName = "1.0"
+        }
     }
 
     buildTypes {
@@ -25,7 +38,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            // Opcional: para modificar algo solo en debug
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -36,7 +53,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
