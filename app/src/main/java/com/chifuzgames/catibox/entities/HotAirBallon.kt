@@ -12,7 +12,7 @@ class HotAirBalloon(
     private val bitmap: Bitmap,
     val fromLeft: Boolean
 ) {
-    private val speed = 5f // velocidad del globo
+    private val speed = 3f // velocidad del globo
 
     fun update() {
         if (fromLeft) x += speed else x -= speed

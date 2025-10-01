@@ -11,7 +11,7 @@ class Plane(
     val height: Int,
     private val bitmap: Bitmap
 ) {
-    private val speed = 7f
+    private val speed = 4f
     var hasDroppedItem = false // Para saber si ya lanzó la fruta
 
     fun update() {

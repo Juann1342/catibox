@@ -177,16 +177,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Evita que dos gatos aterricen al mismo tiempo y sea imposible atraparlos.
 
     private val levelDifficulty = listOf(
-        Pair(1f, 75), // nivel 1: velocidad base x1, intervalo 75 frames. (dificultad inicial por nivel, cada cuanto aparece un gato)
-        Pair(1.8f, 70), // nivel 2: más rápido, menos intervalo
-        Pair(2.5f, 65), // nivel 3
-        Pair(3.2f, 60), // nivel 4
-        Pair(3.8f, 55),  // nivel 5
-        Pair(4.5f, 50),  // nivel 6
-        Pair(5.2f, 45),  // nivel 7
-        Pair(6f, 40),  // nivel 8
-        Pair(6.8f, 35),  // nivel 9
-        Pair(8f, 30),  // nivel 10+
+        Pair(0.8f, 75), // nivel 1: velocidad base x1, intervalo 75 frames. (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(1.1f, 70), // nivel 2: más rápido, menos intervalo
+        Pair(1.3f, 65), // nivel 3
+        Pair(1.6f, 60), // nivel 4
+        Pair(1.9f, 55),  // nivel 5
+        Pair(2.3f, 50),  // nivel 6
+        Pair(2.8f, 45),  // nivel 7
+        Pair(3.2f, 40),  // nivel 8
+        Pair(3.6f, 35),  // nivel 9
+        Pair(4.0f, 30),  // nivel 10+
 
     )
 
@@ -414,7 +414,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                             bitmap = bootBitmap,
                             targetX = player!!.x + player!!.width / 2f,
                             targetY = player!!.y + player!!.height / 2f,
-                            speed = 13f
+                            speed = 9f
                         )
                     )
                     b.hasDroppedBoot = true
