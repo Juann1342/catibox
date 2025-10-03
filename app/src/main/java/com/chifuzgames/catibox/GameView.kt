@@ -2,6 +2,7 @@ package com.chifuzgames.catibox
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
@@ -89,6 +90,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private val boots = mutableListOf<Boot>()
     private var activeFruit: Fruit? = null
     private var activeStar: Star? = null
+    var isAbandoned = false
 
     var score = 0
     private var lives = 5
@@ -238,8 +240,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         fruitBitmap = BitmapFactory.decodeResource(resources, R.drawable.fruit)
         starBitmap = BitmapFactory.decodeResource(resources, R.drawable.star)
 
-     //   val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
-    //    val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
         val balloonWidth = (screenWidth / BALLOON_WIDTH_RATIO).toInt()
         val balloonHeight = (balloonWidth * BALLOON_HEIGHT_MULT).toInt()
         val planeWidth = (screenWidth / PLANE_WIDTH_RATIO).toInt()
@@ -247,7 +247,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
 
-      //  playerBitmap = playerBitmap.scale(playerWidth, playerHeight, false)
         grassBitmap = grassBitmap.scale(screenWidth + 100, 400, false)
         balloonBitmap = balloonBitmap.scale(balloonWidth, balloonHeight, false)
         planeBitmap = planeBitmap.scale(planeWidth, planeHeight, false)
@@ -259,7 +258,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // init player
         player = Player(
             x = screenWidth / 2f - playerWidth / 2f,
-            y = screenHeight.toFloat() - playerHeight - 200f,
+            y = screenHeight.toFloat() - playerHeight - 150f,
             width = playerWidth,
             height = playerHeight
         )
@@ -326,7 +325,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             catBitmap, backgroundBitmap, grassBitmap, balloonBitmap, planeBitmap,
             ufoBitmap, bootBitmap, fruitBitmap, starBitmap
         ).forEach { bmp ->
-            bmp?.takeIf { !it.isRecycled }?.recycle()
+            bmp.takeIf { !it.isRecycled }?.recycle()
         }
 
         // 3. Limpiar caches
@@ -581,7 +580,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
 
         // --- Game Over ---
-        if (lives <= 0 && !gameOver) {
+        if (lives <= 0 && !gameOver && !isAbandoned) {
             gameOver = true
             SoundManager.playSound("gameOver")
 
@@ -847,6 +846,17 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
         return decoded
     }
+
+    fun abandonGame() {
+        if (gameOver) return  // si ya terminó, no hacemos nada
+        isAbandoned = true
+        pauseThread()
+        val intent = Intent(context, MainMenuActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
+
 
 
 }

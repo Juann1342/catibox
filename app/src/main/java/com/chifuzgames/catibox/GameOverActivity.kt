@@ -23,14 +23,12 @@ class GameOverActivity : AppCompatActivity() {
         val highStreak = prefs.getInt("MAX_STREAK_HIST", 0)
 
         // Mostrar puntaje actual
-        findViewById<TextView>(R.id.scoreTextView).text = "Score: $score"
-
+        findViewById<TextView>(R.id.scoreTextView).text = getString(R.string.score_text, score)
         // Mostrar racha actual
-        findViewById<TextView>(R.id.streakTextView).text = "Max Streak: $maxStreak"
-
+        findViewById<TextView>(R.id.streakTextView).text = getString(R.string.max_streak_text, maxStreak)
         // Mostrar récord histórico
-        findViewById<TextView>(R.id.highScoreTextView).text = "High Score: $highScore"
-        findViewById<TextView>(R.id.highStreakTextView).text = "Longest Streak: $highStreak"
+        findViewById<TextView>(R.id.highScoreTextView).text = getString(R.string.high_score_text, highScore)
+        findViewById<TextView>(R.id.highStreakTextView).text = getString(R.string.high_streak_text, highStreak)
 
         val extraMessageScore = findViewById<TextView>(R.id.extraMessageScoreTextView)
         val extraMessageStreak = findViewById<TextView>(R.id.extraMessageStreakTextView)
@@ -40,12 +38,12 @@ class GameOverActivity : AppCompatActivity() {
 
         // Chequear récords
         if (newHighScoreFlag) {
-            extraMessageScore.text = "🎉 New High Score!"
+            extraMessageScore.text = getString(R.string.new_high_score)
             extraMessageScore.visibility = View.VISIBLE
         }
 
         if (newHighStreakFlag) {
-            extraMessageStreak.text = "🔥 New Longest Streak!"
+            extraMessageStreak.text = getString(R.string.new_high_streak)
             extraMessageStreak.visibility = View.VISIBLE
         }
 

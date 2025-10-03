@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">¡Fin del juego!</string>
+    <string name="score_game_over">Puntaje: 0</string>
+    <string name="streak_game_over">Racha máxima: 0</string>
+    <string name="high_score">¡Récord: 0!</string>
+    <string name="longest_streak">Racha más larga: 0</string>
+    <string name="play_again">Jugar otra vez</string>
+    <string name="start">¡Vamos!</string>
+    <string name="your_high_score">Tu mejor puntaje: 0</string>
+    <string name="your_longest_streak">Tu racha más larga: 0</string>
+    <string name="score_text">Puntaje: %d</string>
+    <string name="max_streak_text">Racha máxima: %d</string>
+    <string name="high_score_text">Récord: %d</string>
+    <string name="high_streak_text">Racha más larga: %d</string>
+    <string name="new_high_score">&#x1F389; ¡Nuevo récord!</string>
+    <string name="new_high_streak">&#x1F525; ¡Nueva racha más larga!</string>
+    <string name="score_canvas">Puntaje: %d</string>
+    <string name="streak_canvas">Racha: %d  (Máx: %d)</string>
+    <string name="lives_text">VIDAS: %d</string>
+    <string name="level_text">NIVEL %d</string>
+    <string name="paused_text">PAUSADO</string>
+    <string name="your_high_score_k">&#x1F680; Tu récord: %d</string>
+    <string name="your_longest_streak_k">&#x1F525; Tu racha más larga: %d</string>
+</resources>

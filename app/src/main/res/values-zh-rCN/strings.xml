@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">游戏结束！</string>
+    <string name="score_game_over">得分: 0</string>
+    <string name="streak_game_over">最高连击: 0</string>
+    <string name="high_score">最高分: 0</string>
+    <string name="longest_streak">最长连击: 0</string>
+    <string name="play_again">再玩一次</string>
+    <string name="start">开始!</string>
+    <string name="your_high_score">你的最高分: 0</string>
+    <string name="your_longest_streak">你的最长连击: 0</string>
+    <string name="score_text">得分: %d</string>
+    <string name="max_streak_text">最高连击: %d</string>
+    <string name="high_score_text">最高分: %d</string>
+    <string name="high_streak_text">最长连击: %d</string>
+    <string name="new_high_score">🎉 新纪录!</string>
+    <string name="new_high_streak">🔥 新最长连击!</string>
+    <string name="score_canvas">得分: %d</string>
+    <string name="streak_canvas">连击: %d  (最大: %d)</string>
+    <string name="lives_text">生命: %d</string>
+    <string name="level_text">第 %d 关</string>
+    <string name="paused_text">暂停</string>
+    <string name="your_high_score_k">🚀 你的最高分: %d</string>
+    <string name="your_longest_streak_k">🔥 你的最长连击: %d</string>
+</resources>

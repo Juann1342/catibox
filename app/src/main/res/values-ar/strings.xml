@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">انتهت اللعبة!</string>
+    <string name="score_game_over">النقاط: 0</string>
+    <string name="streak_game_over">أطول سلسلة: 0</string>
+    <string name="high_score">أعلى نقاط: 0</string>
+    <string name="longest_streak">أطول سلسلة: 0</string>
+    <string name="play_again">العب مرة أخرى</string>
+    <string name="start">ابدأ!</string>
+    <string name="your_high_score">أعلى نقاطك: 0</string>
+    <string name="your_longest_streak">أطول سلسلتك: 0</string>
+    <string name="score_text">النقاط: %d</string>
+    <string name="max_streak_text">أقصى سلسلة: %d</string>
+    <string name="high_score_text">أعلى نقاط: %d</string>
+    <string name="high_streak_text">أطول سلسلة: %d</string>
+    <string name="new_high_score">🎉 رقم قياسي جديد!</string>
+    <string name="new_high_streak">🔥 أطول سلسلة جديدة!</string>
+    <string name="score_canvas">النقاط: %d</string>
+    <string name="streak_canvas">السلسلة: %d  (الحد الأقصى: %d)</string>
+    <string name="lives_text">حياتك: %d</string>
+    <string name="level_text">المستوى %d</string>
+    <string name="paused_text">موقف</string>
+    <string name="your_high_score_k">🚀 أعلى نقاطك: %d</string>
+    <string name="your_longest_streak_k">🔥 أطول سلسلتك: %d</string>
+</resources>

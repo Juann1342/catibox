@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Catibox</string>
+    <string name="game_over">Game Over</string>
+    <string name="score_game_over">Score: 0</string>
+    <string name="streak_game_over">Max Streak: 0</string>
+    <string name="high_score">High Score: 0</string>
+    <string name="longest_streak">Longest Streak: 0</string>
+    <string name="play_again">Play Again</string>
+    <string name="start">Start</string>
+    <string name="your_high_score">Your High Score: 0</string>
+    <string name="your_longest_streak">Your Longest Streak: 0</string>
+    <string name="score_text">Score: %d</string>
+    <string name="max_streak_text">Max Streak: %d</string>
+    <string name="high_score_text">High Score: %d</string>
+    <string name="high_streak_text">Longest Streak: %d</string>
+    <string name="new_high_score">&#x1F389; New High Score!</string>
+    <string name="new_high_streak">&#x1F525; New Longest Streak!</string>
+    <string name="score_canvas">Score: %d</string>
+    <string name="streak_canvas">Streak: %d  (Max: %d)</string>
+    <string name="lives_text">LIVES: %d</string>
+    <string name="level_text">LEVEL %d</string>
+    <string name="paused_text">PAUSED</string>
+    <string name="your_high_score_k">&#x1F680; Your High Score %d</string>
+    <string name="your_longest_streak_k">&#x1F525; Your Longest Streak %d</string>
 </resources>

@@ -14,7 +14,7 @@ class Cat(
     private var baseFallSpeed = (200..400).random().toFloat() // píxeles por segundo
     private var sliding = false
     private var slideDirection = 0f
-    private val slideSpeed = (100..200).random().toFloat() // píxeles por segundo
+    private val slideSpeed = (80..150).random().toFloat() // píxeles por segundo
     var canBeCaught = true
     var gone = false
     private var hitGroundPlayed = false
@@ -27,7 +27,7 @@ class Cat(
             y += baseFallSpeed * difficultyMultiplier * deltaTime
 
             val visiblePart = 20f
-            val slideStartY = screenHeight - groundOffset - visiblePart
+            val slideStartY = screenHeight - groundOffset - visiblePart + 50
 
             if (y + height >= slideStartY) {
                 sliding = true

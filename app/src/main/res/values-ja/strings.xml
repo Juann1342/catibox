@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">게임 종료!</string>
+    <string name="score_game_over">점수: 0</string>
+    <string name="streak_game_over">최대 연속: 0</string>
+    <string name="high_score">최고 점수: 0</string>
+    <string name="longest_streak">최장 연속: 0</string>
+    <string name="play_again">다시 플레이</string>
+    <string name="start">시작!</string>
+    <string name="your_high_score">당신의 최고 점수: 0</string>
+    <string name="your_longest_streak">당신의 최장 연속: 0</string>
+    <string name="score_text">점수: %d</string>
+    <string name="max_streak_text">최대 연속: %d</string>
+    <string name="high_score_text">최고 점수: %d</string>
+    <string name="high_streak_text">최장 연속: %d</string>
+    <string name="new_high_score">🎉 새 기록!</string>
+    <string name="new_high_streak">🔥 새 최장 연속!</string>
+    <string name="score_canvas">점수: %d</string>
+    <string name="streak_canvas">연속: %d  (최대: %d)</string>
+    <string name="lives_text">목숨: %d</string>
+    <string name="level_text">레벨 %d</string>
+    <string name="paused_text">일시정지</string>
+    <string name="your_high_score_k">🚀 당신의 최고 점수: %d</string>
+    <string name="your_longest_streak_k">🔥 당신의 최장 연속: %d</string>
+</resources>

@@ -22,7 +22,7 @@ class HUD(private val context: Context) {
 
     private val paint = Paint().apply { color = Color.WHITE; textSize = 60f; isAntiAlias = true }
     private val livesPaint = Paint().apply { color = Color.RED; textSize = 60f; isAntiAlias = true }
-    private val streakPaint = Paint().apply { color = Color.CYAN; textSize = 50f; isAntiAlias = true }
+    private val streakPaint = Paint().apply { color = Color.WHITE; textSize = 45f; isAntiAlias = true }
     private val levelPaint = Paint().apply {
         color = Color.YELLOW
         textSize = 120f
@@ -64,20 +64,40 @@ class HUD(private val context: Context) {
     }
 
     fun draw(canvas: Canvas, screenWidth: Int) {
+
+        val levelText = context.getString(R.string.level_text, level)
+        val levelX = 30f // ajustar la posición
+        val levelY = 150f
+        canvas.drawText(levelText, levelX, levelY, paint)
         // Score y Streak
-        canvas.drawText("Score: $score", 30f, 150f, paint)
-        canvas.drawText("Streak: $streak  (Max: $maxStreak)", 30f, 220f, streakPaint)
+        canvas.drawText(
+            context.getString(R.string.score_canvas, score),
+            30f,
+            220f,
+            streakPaint
+        )
+
+        canvas.drawText(
+            context.getString(R.string.streak_canvas, streak, maxStreak),
+            30f,
+            290f,
+            streakPaint
+
+        )
+
 
         // Lives
-        val livesText = "Lives: $lives"
+        val livesText = context.getString(R.string.lives_text, lives)
         val livesTextWidth = livesPaint.measureText(livesText)
         val livesX = screenWidth - livesTextWidth - 30f
         val livesY = 150f
         canvas.drawText(livesText, livesX, livesY, livesPaint)
 
+
+
         // Mute y Pause
         val iconMute = if (SoundManager.isMuted) muteIcon else unmuteIcon
-        val muteX = livesX
+        val muteX = livesX +60f
         val muteY = livesY + 40f
         canvas.drawBitmap(iconMute, muteX, muteY, null)
         muteButtonRect.set(muteX, muteY, muteX + muteButtonSize, muteY + muteButtonSize)
@@ -98,7 +118,7 @@ class HUD(private val context: Context) {
                 textAlign = Paint.Align.CENTER
                 isFakeBoldText = true
             }
-            canvas.drawText("GAME OVER", screenWidth / 2f, canvas.height / 2f, textPaint)
+            canvas.drawText(    context.getString(R.string.game_over), screenWidth / 2f, canvas.height / 2f, textPaint)
         }
 
         // Level transition
@@ -109,8 +129,12 @@ class HUD(private val context: Context) {
             levelPaint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
             val cx = screenWidth / 2f
             val cy = canvas.height / 2f
-            canvas.drawText("LEVEL $level", cx, cy, levelPaint)
-        }
+            canvas.drawText(
+                context.getString(R.string.level_text, level),
+                cx,
+                cy,
+                levelPaint
+            )        }
 
         // Pausa visible
         if (isPaused && !gameOver) {
@@ -120,7 +144,12 @@ class HUD(private val context: Context) {
                 textAlign = Paint.Align.CENTER
                 isFakeBoldText = true
             }
-            canvas.drawText("PAUSED", screenWidth / 2f, canvas.height / 2f, pausePaint)
+            canvas.drawText(
+                context.getString(R.string.paused_text),
+                screenWidth / 2f,
+                canvas.height / 2f,
+                pausePaint
+            )
         }
     }
 
@@ -144,9 +173,6 @@ class HUD(private val context: Context) {
         return false
     }
 
-    // Método auxiliar para evitar mover jugador sobre los botones
-    fun isTouchingButton(x: Float, y: Float): Boolean {
-        return pauseButtonRect.contains(x, y) || muteButtonRect.contains(x, y)
-    }
+
 
 }

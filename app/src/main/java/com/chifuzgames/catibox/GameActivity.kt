@@ -72,8 +72,9 @@ class GameActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        gameView.pauseThread()
+      //  gameView.pauseThread()
         backgroundMusic.pause()
+        gameView.abandonGame()
     }
 
     override fun onResume() {

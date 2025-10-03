@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">Fim de jogo!</string>
+    <string name="score_game_over">Pontuação: 0</string>
+    <string name="streak_game_over">Sequência máxima: 0</string>
+    <string name="high_score">Recorde: 0</string>
+    <string name="longest_streak">Maior sequência: 0</string>
+    <string name="play_again">Jogar de novo</string>
+    <string name="start">Vamos!</string>
+    <string name="your_high_score">Seu recorde: 0</string>
+    <string name="your_longest_streak">Sua maior sequência: 0</string>
+    <string name="score_text">Pontuação: %d</string>
+    <string name="max_streak_text">Sequência máxima: %d</string>
+    <string name="high_score_text">Recorde: %d</string>
+    <string name="high_streak_text">Maior sequência: %d</string>
+    <string name="new_high_score">🎉 Novo recorde!</string>
+    <string name="new_high_streak">🔥 Nova maior sequência!</string>
+    <string name="score_canvas">Pontuação: %d</string>
+    <string name="streak_canvas">Sequência: %d  (Máx: %d)</string>
+    <string name="lives_text">VIDAS: %d</string>
+    <string name="level_text">NÍVEL %d</string>
+    <string name="paused_text">PAUSADO</string>
+    <string name="your_high_score_k">🚀 Seu recorde: %d</string>
+    <string name="your_longest_streak_k">🔥 Sua maior sequência: %d</string>
+</resources>

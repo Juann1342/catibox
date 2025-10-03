@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">Oyun bitti!</string>
+    <string name="score_game_over">Skor: 0</string>
+    <string name="streak_game_over">En uzun seri: 0</string>
+    <string name="high_score">Rekor: 0</string>
+    <string name="longest_streak">En uzun seri: 0</string>
+    <string name="play_again">Tekrar oyna</string>
+    <string name="start">Başla!</string>
+    <string name="your_high_score">Senin rekorun: 0</string>
+    <string name="your_longest_streak">Senin en uzun serin: 0</string>
+    <string name="score_text">Skor: %d</string>
+    <string name="max_streak_text">En uzun seri: %d</string>
+    <string name="high_score_text">Rekor: %d</string>
+    <string name="high_streak_text">En uzun seri: %d</string>
+    <string name="new_high_score">🎉 Yeni rekor!</string>
+    <string name="new_high_streak">🔥 Yeni en uzun seri!</string>
+    <string name="score_canvas">Skor: %d</string>
+    <string name="streak_canvas">Seri: %d  (Maks: %d)</string>
+    <string name="lives_text">CAN: %d</string>
+    <string name="level_text">SEVİYE %d</string>
+    <string name="paused_text">DURAKLATILDI</string>
+    <string name="your_high_score_k">🚀 Senin rekorun: %d</string>
+    <string name="your_longest_streak_k">🔥 Senin en uzun serin: %d</string>
+</resources>

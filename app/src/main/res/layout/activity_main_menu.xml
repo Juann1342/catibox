@@ -4,72 +4,73 @@
     android:id="@+id/menuRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/menu_background"
+    android:background="@drawable/background_start"
     tools:context=".MainMenuActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-    <!-- Logo o nombre del juego #FFD700-->
     <TextView
         android:id="@+id/gameTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CATIBOX"
-        android:textColor="#C2185B"
+        android:text="@string/app_name"
+        android:textAllCaps="true"
+        android:textColor="#FFD700"
         android:textSize="64sp"
         android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="135dp"
         android:shadowColor="#000000"
-        android:shadowDx="4"
-        android:shadowDy="4"
-        android:shadowRadius="8" />
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10" />
 
     <!-- Botón START -->
     <Button
         android:id="@+id/startButton"
         android:layout_width="250dp"
         android:layout_height="70dp"
-        android:text="START"
+        android:text="@string/start"
         android:textSize="28sp"
+        android:textAllCaps="true"
         android:textColor="#FFFFFF"
-        android:background="@drawable/button_start"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="100dp" />
+        android:backgroundTint="#1976D2"
+        android:layout_marginTop="50dp"
+        android:shadowColor="#000000"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10"/>
+
 
     <TextView
         android:id="@+id/tvYourHighScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your High Score: 0"
+        android:text="@string/your_high_score"
         android:textSize="24sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="50dp"/>
+        android:textStyle="bold"
+        android:layout_marginTop="40dp"
+        android:shadowColor="#000000"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10"/>
+
+
     <TextView
         android:id="@+id/tvYourLongestStreak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Longest Streak: 0"
+        android:text="@string/your_longest_streak"
         android:textSize="24sp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         android:layout_marginBottom="32dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:shadowColor="#000000"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="10"/>
 
 
-
-
-
-    <!-- Opcional: botón de configuración -->
-  <!--  <Button
-        android:id="@+id/settingsButton"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:text="SETTINGS"
-        android:textSize="20sp"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/button_start"
-        android:layout_below="@id/startButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>-->
 </LinearLayout>

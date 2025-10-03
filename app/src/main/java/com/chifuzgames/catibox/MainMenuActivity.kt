@@ -39,7 +39,8 @@ class MainMenuActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("CATIBOX_PREFS", MODE_PRIVATE)
         val highScore = prefs.getInt("MAX_SCORE_HIST", 0)
         val highStreak = prefs.getInt("MAX_STREAK_HIST", 0)
-        tvHighScore.text = "\uD83D\uDE80  Your High Score $highScore"
-        tvLongestStreak.text = "🔥 Your Longest Streak $highStreak"
+        tvHighScore.text = getString(R.string.your_high_score_k, highScore)
+        tvLongestStreak.text = getString(R.string.your_longest_streak_k, highStreak)
+
     }
 }
