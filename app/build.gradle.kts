@@ -25,7 +25,7 @@ android {
         create("prod") {
             dimension = "environment"
             applicationId = "com.chifuzgames.catibox"
-            versionCode = 1
+            versionCode = 10
             versionName = "1.0"
         }
     }
