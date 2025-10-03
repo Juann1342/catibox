@@ -16,24 +16,24 @@ class Player(
     val height: Int
 ) {
     var state: PlayerState = PlayerState.NORMAL
-    var stateTimer: Int = 0 // duración del estado temporal en frames
+    var stateTimer: Float = 0f // ahora en segundos
 
-    fun update() {
-        // Si hay un estado temporal activo, reducir el timer
-        if (stateTimer > 0) {
-            stateTimer--
-        } else if (state != PlayerState.DOUBLE_POINTS) {
-            state = PlayerState.NORMAL
+    fun update(deltaTime: Float) {
+        if (stateTimer > 0f) {
+            stateTimer -= deltaTime
+            if (stateTimer <= 0f && state != PlayerState.DOUBLE_POINTS) {
+                state = PlayerState.NORMAL
+            }
         }
     }
 
     fun draw(
         canvas: Canvas,
         normalBitmap: Bitmap,
-        doublePointsBitmap: Bitmap?,
-        sadBitmap: Bitmap?,
-        happyBitmap: Bitmap?,
-        ouchBitmap: Bitmap?
+        doublePointsBitmap: Bitmap? = null,
+        sadBitmap: Bitmap? = null,
+        happyBitmap: Bitmap? = null,
+        ouchBitmap: Bitmap? = null
     ) {
         val bitmapToDraw = when(state) {
             PlayerState.NORMAL -> normalBitmap

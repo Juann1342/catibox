@@ -90,11 +90,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var activeFruit: Fruit? = null
     private var activeStar: Star? = null
 
-    private var frameCount = 0
     var score = 0
     private var lives = 5
-    private var difficultyMultiplier = 1f
-    private var spawnInterval = 60
+    private var difficultyMultiplier = 2f
 
     // Música de fondo
 
@@ -110,7 +108,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     // --- Variables globales de GameView ---
     private var doublePointsActive = false
-    private var doublePointsTimer = 0 // en frames
+    private var doublePointsTimer = 0f // en frames
     private val DOUBLE_POINTS_DURATION = 10 * 60 // 10 segundos * 60 fps
 
     // --- Niveles ---
@@ -118,10 +116,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var catsSpawned = 0
     private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26, Int.MAX_VALUE) // nivel 10 sin límite
     private var levelTransition = false
-    private var levelTransitionTimer = 0
+    private var levelTransitionTimer = 0f
+
+    private var lastCatSpawnTimeMs = System.currentTimeMillis()
+    private var catSpawnIntervalMs = 3000L // 3 segundos por defecto, se ajusta por nivel
 
     var planeSpawned = false
     var ufoSpawned = false
+    private var lastBalloonScore = 0
 
 
     // --- Background / Grass per level (crossfade) ---
@@ -147,46 +149,23 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var initialLives = 5
     // Vidas iniciales del jugador al comenzar la partida.
 
-    private var initialSpawnInterval = 60
-    // Intervalo base de aparición de gatos (en frames).
-    // A menor número → más gatos aparecen más rápido.
-
-    private var initialDifficultyMultiplier = 1f
-    // Multiplicador inicial de dificultad. Puede usarse para escalar velocidades o frecuencia.
-
-    // Incremento progresivo de dificultad cada vez que se supera un umbral de score.
-    // Ejemplo: más velocidad o menor spawn interval.
-
-    private var minSpawnInterval = 30
-    // Intervalo mínimo permitido entre spawns.
-    // Evita que el juego se vuelva imposible (demasiados gatos juntos).
 
 //dificultad por gato
     private var difficultyIncreasePerCat = 0.05f
     //cada cuantos gatos aumenta
-    private var spawnIntervalDecreasePerCat = 1
 
-
-    // --- Control de llegadas simultáneas ---
-    private val CAT_BASE_FALL_SPEED = 6f
-    // Velocidad base de caída de los gatos (píxeles por frame).
-    // Usar el mismo valor que en Cat.update() para mantener coherencia.
-
-    private val minLandingGapFrames = 60
-    // Número mínimo de frames que deben separar la llegada de dos gatos al suelo.
-    // Evita que dos gatos aterricen al mismo tiempo y sea imposible atraparlos.
 
     private val levelDifficulty = listOf(
-        Pair(0.8f, 75), // nivel 1: velocidad base x1, intervalo 75 frames. (dificultad inicial por nivel, cada cuanto aparece un gato)
-        Pair(1.1f, 70), // nivel 2: más rápido, menos intervalo
-        Pair(1.3f, 65), // nivel 3
-        Pair(1.6f, 60), // nivel 4
-        Pair(1.9f, 55),  // nivel 5
-        Pair(2.3f, 50),  // nivel 6
-        Pair(2.8f, 45),  // nivel 7
-        Pair(3.2f, 40),  // nivel 8
-        Pair(3.6f, 35),  // nivel 9
-        Pair(4.0f, 30),  // nivel 10+
+        Pair(0.5f, 110), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(0.7f, 100), // nivel 2: más rápido, menos intervalo
+        Pair(0.9f, 90), // nivel 3
+        Pair(1f, 80), // nivel 4
+        Pair(1.2f, 70),  // nivel 5
+        Pair(1.4f, 60),  // nivel 6
+        Pair(1.6f, 52),  // nivel 7
+        Pair(1.8f, 45),  // nivel 8
+        Pair(1.9f, 40),  // nivel 9
+        Pair(2f, 35),  // nivel 10+
 
     )
 
@@ -284,9 +263,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             height = playerHeight
         )
         // inicializar línea de partida
+// inicializar línea de partida y dificultad del nivel 1
         lives = initialLives
-        difficultyMultiplier = initialDifficultyMultiplier
-        spawnInterval = initialSpawnInterval
+        level = 1
+        catsSpawned = 0
+        levelTransition = false
+
+// aplicar dificultad inicial desde levelDifficulty[0]
+        difficultyMultiplier = levelDifficulty[0].first
+        catSpawnIntervalMs = (levelDifficulty[0].second / 60f * 1000).toLong()
 
 
         // Initialize current background/grass from the default (keeps compatibility)
@@ -347,17 +332,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         grassTransition = true
     }
 
-    fun update() {
+    fun update(deltaTime: Float) {
         if (player == null || gameOver || isPaused) return
 
         // --- Transición de nivel ---
         if (levelTransition) {
-            levelTransitionTimer--
+            levelTransitionTimer -= deltaTime * 60
             if (levelTransitionTimer <= 0) {
                 levelTransition = false
-                catsSpawned = 0 // reset para el próximo nivel
-
-                // finalize background/grass if not already swapped (defensive)
+                catsSpawned = 0
                 if (backgroundTransition && nextBackground != null) {
                     currentBackground = nextBackground
                     nextBackground = null
@@ -372,21 +355,20 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             return
         }
 
-        player?.update()
-        frameCount++
+        player?.update(deltaTime)
 
-// --- Spawning de gatos controlado por nivel ---
-        if (frameCount % spawnInterval == 0 && catsSpawned < catsPerLevel[level - 1]) {
-            // spawnCat ahora devuelve true si realmente añadió un gato
+        // --- Spawn de gatos usando tiempo absoluto ---
+        val now = System.currentTimeMillis()
+        if (now - lastCatSpawnTimeMs >= catSpawnIntervalMs && catsSpawned < catsPerLevel[level - 1]) {
             val spawned = spawnCat()
             if (spawned) catsSpawned++
+            lastCatSpawnTimeMs = now
         }
-
 
         // --- Globo + Bota ---
         val balloonWidth = (screenWidth / BALLOON_WIDTH_RATIO).toInt()
         val balloonHeight = (balloonWidth * BALLOON_HEIGHT_MULT).toInt()
-        if (score > 0 && score % BALLOON_SCORE_INTERVAL == 0 && balloon == null) {
+        if (score > 0 && score % BALLOON_SCORE_INTERVAL == 0 && score != lastBalloonScore) {
             val fromLeft = Random.nextBoolean()
             val xPos = if (fromLeft) -balloonWidth.toFloat() else screenWidth.toFloat()
             val yPos = Random.nextInt(80, (screenHeight * 0.35).toInt()).toFloat()
@@ -398,10 +380,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 bitmap = balloonBitmap,
                 fromLeft = fromLeft
             )
+          //  lastBalloonScore = score // <- importante, evita repetir en el mismo múltiplo
+
+
         }
-        balloon?.update()
+
+
+        balloon?.update(deltaTime)
         balloon?.let { b ->
             if (!b.hasDroppedBoot && player != null) {
+
                 val reachedMiddle = (b.fromLeft && b.x + b.width / 2f >= screenWidth / 2f) ||
                         (!b.fromLeft && b.x + b.width / 2f <= screenWidth / 2f)
                 if (reachedMiddle) {
@@ -418,10 +406,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                         )
                     )
                     b.hasDroppedBoot = true
+                    if (b.isOffScreen(screenWidth)) balloon = null
+
                 }
             }
         }
-        if (balloon?.isOffScreen(screenWidth) == true) balloon = null
 
         // --- Avión + Fruta ---
         val planeWidth = (screenWidth / PLANE_WIDTH_RATIO).toInt()
@@ -438,7 +427,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             plane = Plane(screenWidth.toFloat(), yPlane, planeWidth, planeHeight, planeBitmap)
         }
         plane?.let { p ->
-            p.update()
+            p.update(deltaTime)
             if (!p.hasDroppedItem) {
                 val reachedMiddle = p.x + p.width / 2f <= screenWidth / 2f
                 if (reachedMiddle) {
@@ -446,7 +435,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                         p.x + p.width / 2f - 30f,
                         p.y + p.height / 2f,
                         70, 70, fruitBitmap,
-                         8f
+                        8f
                     )
                     p.hasDroppedItem = true
                 }
@@ -461,14 +450,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     lives++
                     SoundManager.playSound("fruitCatch")
                     player?.state = PlayerState.HAPPY
-                    player?.stateTimer = 60
+                    player?.stateTimer = 60f
                     activeFruit = null
                     return@let
                 }
             }
-            f.update(screenWidth)
+            f.update(deltaTime, screenWidth)
             if (f.isOffScreen(screenHeight)) activeFruit = null
         }
+
 
         // --- OVNI + Estrella ---
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
@@ -484,7 +474,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             ufo = UFO(xPos, yPos, ufoWidth, ufoHeight, ufoBitmap, fromLeft, screenWidth)
         }
         ufo?.let { u ->
-            u.update()
+            u.update(deltaTime)
             if (!u.hasDroppedItem) {
                 val reachedMiddle = (u.fromLeft && u.x + u.width / 2f >= screenWidth / 2f) ||
                         (!u.fromLeft && u.x + u.width / 2f <= screenWidth / 2f)
@@ -493,7 +483,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                         u.x + u.width / 2f - 30f,
                         u.y + u.height / 2f,
                         70, 70, starBitmap,
-                         8f
+                        8f
                     )
                     u.hasDroppedItem = true
                 }
@@ -506,77 +496,60 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             player?.let { p ->
                 if (s.checkHitPlayer(p)) {
                     doublePointsActive = true
-                    doublePointsTimer = DOUBLE_POINTS_DURATION
+                    doublePointsTimer = DOUBLE_POINTS_DURATION.toFloat()
                     SoundManager.playSound("starCatch")
                     player?.state = PlayerState.DOUBLE_POINTS
-                    player?.stateTimer = DOUBLE_POINTS_DURATION
+                    player?.stateTimer = DOUBLE_POINTS_DURATION.toFloat()
                     activeStar = null
                     return@let
                 }
             }
-            s.update(screenWidth, screenHeight)
+            s.update(deltaTime, screenWidth, screenHeight)
             if (s.isOffScreen(screenHeight)) activeStar = null
         }
 
-        // --- Cats ---
-        val iterator = cats.iterator()
-        while (iterator.hasNext()) {
-            val cat = iterator.next()
-            val previousY = cat.y
-            cat.update(difficultyMultiplier, screenWidth, screenHeight, player!!)
-            if (cat.isOffScreen()) {
-                iterator.remove()
-            } else if (cat.isCaught(player!!, previousY)) {
-                iterator.remove()
 
+       // activeFruit?.update(deltaTime, screenWidth)
+      //  ufo?.update(deltaTime)
+        //activeStar?.update(deltaTime, screenWidth, screenHeight)
+
+        val catIterator = cats.iterator()
+        while (catIterator.hasNext()) {
+            val cat = catIterator.next()
+            val prevY = cat.y
+            cat.update(deltaTime, difficultyMultiplier, screenWidth, screenHeight, player!!)
+            if (cat.isOffScreen()) catIterator.remove()
+            else if (cat.isCaught(player!!, prevY)) {
+                catIterator.remove()
                 val points = if (doublePointsActive) 20 else 10
                 score += points
                 SoundManager.playSound("catHappy")
-
-                // aumentar racha
                 streak++
                 if (streak > maxStreak) maxStreak = streak
 
-                // ---dificultad por gato ---
+                // dificultad
                 difficultyMultiplier += difficultyIncreasePerCat
-                spawnInterval = (spawnInterval - spawnIntervalDecreasePerCat).coerceAtLeast(minSpawnInterval)
             }
-
         }
 
-        // Si ya terminó el nivel: iniciar transición (pausa reducida)
-        if (catsSpawned >= catsPerLevel[level - 1] && cats.isEmpty() && level < catsPerLevel.size) {
-            level++
-            // prepare assets for the next level and start transition
-            loadLevelAssets(level)
-            levelTransition = true
-            levelTransitionTimer = 90 // <-- REDUCIDO: 90 frames ≈ 1.5s
-            //dificultad al comenzar la transición
-            if (level < levelDifficulty.size) {
-                difficultyMultiplier = levelDifficulty[level - 1].first
-                spawnInterval = levelDifficulty[level - 1].second
-            }
-
-        }
-
-        // --- Botas ---
+        // --- Boots ---
         val bootIterator = boots.iterator()
         while (bootIterator.hasNext()) {
             val boot = bootIterator.next()
-            boot.update()
+            boot.update(deltaTime)
             if (boot.isOffScreen(screenWidth, screenHeight)) bootIterator.remove()
             else if (player != null && boot.hasHitPlayer(player!!)) {
                 SoundManager.playSound("bootCrash")
                 player?.state = PlayerState.OUCH
-                player?.stateTimer = 60
+                player?.stateTimer = 1.0f
                 lives--
                 bootIterator.remove()
             }
         }
 
-        // --- Timer de bonus ---
+        // --- Bonus timer ---
         if (doublePointsActive) {
-            doublePointsTimer--
+            doublePointsTimer -= deltaTime * 60f
             if (doublePointsTimer <= 0) doublePointsActive = false
         }
 
@@ -614,7 +587,22 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             context.startActivity(intent)
             pauseThread()
         }
+
+
+
+        // --- Nivel ---
+        if (catsSpawned >= catsPerLevel[level - 1] && cats.isEmpty() && level < catsPerLevel.size) {
+            level++
+            loadLevelAssets(level)
+            levelTransition = true
+            levelTransitionTimer = 1.5f * 60f
+            if (level < levelDifficulty.size) {
+                difficultyMultiplier = levelDifficulty[level - 1].first
+                catSpawnIntervalMs = (levelDifficulty[level - 1].second / 60f * 1000).toLong()
+            }
+        }
     }
+
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
@@ -623,7 +611,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // --- Background crossfade (nivel) ---
         if (backgroundTransition && currentBackground != null && nextBackground != null && levelTransition) {
             val total = 90f
-            val elapsed = (90f - levelTransitionTimer.toFloat()).coerceAtLeast(0f)
+            val elapsed = (90f - levelTransitionTimer).coerceAtLeast(0f)
             val progress = (elapsed / total).coerceIn(0f, 1f)
             val paint = Paint()
             paint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
@@ -659,7 +647,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // --- Grass crossfade ---
         if (grassTransition && currentGrass != null && nextGrass != null && levelTransition) {
             val total = 90f
-            val elapsed = (90f - levelTransitionTimer.toFloat()).coerceAtLeast(0f)
+            val elapsed = (90f - levelTransitionTimer).coerceAtLeast(0f)
             val progress = (elapsed / total).coerceIn(0f, 1f)
             val paint = Paint()
             paint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
@@ -734,42 +722,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
      * Implementa hasta N intentos para encontrar una posición válida (no conflictiva).
      */
     private fun spawnCat(): Boolean {
-        val maxAttempts = 6 // número de posiciones distintas a probar antes de renunciar
+        val maxAttempts = 6
         val baseWidth = (screenWidth / CAT_BASE_RATIO).toInt()
 
-        repeat(maxAttempts) { attempt ->
+        repeat(maxAttempts) {
             val catWidth = (baseWidth * (1f - difficultyMultiplier * 0.05f)).toInt().coerceAtLeast(baseWidth / 2)
             val catHeight = catWidth
             val xPos = (0..(screenWidth - catWidth)).random().toFloat()
             val startY = -catHeight.toFloat()
 
-            // calcular frames estimados hasta llegar al suelo
-            val groundY = screenHeight.toFloat() - 100f
-            val pixelsToTravel = (groundY - startY).coerceAtLeast(1f)
-
-            val fallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier
-            val estimatedFramesToLand = (pixelsToTravel / fallSpeed).toInt()
-            val estimatedLandingFrame = frameCount + estimatedFramesToLand
-
-            // comprobar si existe otro gato con landing cercano
-            var conflict = false
-            for (c in cats) {
-                val remainingPixels = (groundY - c.y).coerceAtLeast(1f)
-                val cFallSpeed = CAT_BASE_FALL_SPEED * difficultyMultiplier
-                val cFramesToLand = (remainingPixels / cFallSpeed).toInt()
-                val cLandingFrame = frameCount + cFramesToLand
-                if (kotlin.math.abs(cLandingFrame - estimatedLandingFrame) < minLandingGapFrames) {
-                    conflict = true
-                    break
-                }
-            }
-
-            if (conflict) {
-                // intentar otra posición
-                return@repeat
-            }
-
-            // si llegamos aquí, no hay conflicto: crear el gato y salir
+            // crear cat y velocidad en píxeles/segundo
             val catBitmapScaled = catBitmap.scale(catWidth, catHeight, false)
             cats.add(
                 Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
@@ -777,15 +739,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     streak = 0
                     player?.state = PlayerState.SAD
                     lives--
-                    player?.stateTimer = 60
+                    player?.stateTimer = 1.0f // 1 segundo
                 }
             )
             return true
         }
-
-        // si no se pudo spawnear tras varios intentos, devolver false
         return false
     }
+
 
     fun toggleMute() {
         SoundManager.toggleMute() // pausa/reanuda efectos

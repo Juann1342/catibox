@@ -21,13 +21,14 @@ class Boot(
         val dx = targetX - x
         val dy = targetY - y
         val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
-        vx = dx / distance * speed
-        vy = dy / distance * speed
+        vx = dx / distance * speed *20
+        vy = dy / distance * speed *20
     }
 
-    fun update() {
-        x += vx
-        y += vy
+    fun update(deltaTime: Float) {
+        x += vx * deltaTime
+        y += vy * deltaTime
+
     }
 
     fun draw(canvas: Canvas) {
@@ -39,8 +40,8 @@ class Boot(
     }
 
     fun hasHitPlayer(player: Player): Boolean {
-        val paddingX = player.width * 0.25f  // 25% de los lados
-        val paddingY = player.height * 0.25f // 25% arriba/abajo
+        val paddingX = player.width * 0.25f
+        val paddingY = player.height * 0.25f
 
         val playerCenterRectLeft = player.x + paddingX
         val playerCenterRectTop = player.y + paddingY
@@ -52,5 +53,4 @@ class Boot(
                 y < playerCenterRectBottom &&
                 y + height > playerCenterRectTop
     }
-
 }

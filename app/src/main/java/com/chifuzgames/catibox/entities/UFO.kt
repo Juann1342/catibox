@@ -12,11 +12,11 @@ class UFO(
     val fromLeft: Boolean,
     private val screenWidth: Int
 ) {
-    private val speed = 5f
-    var hasDroppedItem = false // Para saber si ya lanzó la estrella
+    private val speed = 4f
+    var hasDroppedItem = false
 
-    fun update() {
-        if (fromLeft) x += speed else x -= speed
+    fun update(deltaTime: Float) {
+        if (fromLeft) x += speed * deltaTime*20 else x -= speed * deltaTime *20
     }
 
     fun draw(canvas: Canvas) {

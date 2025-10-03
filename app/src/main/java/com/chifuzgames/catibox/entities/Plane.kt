@@ -10,12 +10,13 @@ class Plane(
     val width: Int,
     val height: Int,
     private val bitmap: Bitmap
-) {
+)
+ {
     private val speed = 4f
-    var hasDroppedItem = false // Para saber si ya lanzó la fruta
+    var hasDroppedItem = false
 
-    fun update() {
-        x -= speed
+    fun update(deltaTime: Float) {
+        x -= speed * deltaTime * 35
     }
 
     fun draw(canvas: Canvas) {

@@ -18,7 +18,7 @@ class HUD(private val context: Context) {
     var gameOver = false
     var level = 1
     var levelTransition = false
-    var levelTransitionTimer = 0
+    var levelTransitionTimer = 0f
 
     private val paint = Paint().apply { color = Color.WHITE; textSize = 60f; isAntiAlias = true }
     private val livesPaint = Paint().apply { color = Color.RED; textSize = 60f; isAntiAlias = true }
@@ -123,8 +123,6 @@ class HUD(private val context: Context) {
             canvas.drawText("PAUSED", screenWidth / 2f, canvas.height / 2f, pausePaint)
         }
     }
-
-
 
 
 

@@ -10,19 +10,16 @@ class Fruit(
     val width: Int,
     val height: Int,
     val bitmap: Bitmap,
-    private val speedY: Float = 8f // velocidad vertical constante hacia abajo
+    private val speedY: Float = 8f
 ) {
-    private var speedX: Float = Random.nextFloat() * 6f - 3f // velocidad horizontal aleatoria
+    private var speedX: Float = Random.nextFloat() * 20f - 10f
 
-    fun update(screenWidth: Int) {
-        x += speedX
-        y += speedY
+    fun update(deltaTime: Float, screenWidth: Int) {
+        x += speedX * deltaTime * 20
+        y += speedY * deltaTime * 20
 
-        // Rebotar solo en los bordes laterales
         if (x < 0f) { x = 0f; speedX = -speedX }
         if (x + width > screenWidth) { x = (screenWidth - width).toFloat(); speedX = -speedX }
-
-        // Evitar que la fruta salga por arriba
         if (y < 0f) y = 0f
     }
 

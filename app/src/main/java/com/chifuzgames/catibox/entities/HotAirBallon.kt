@@ -12,10 +12,10 @@ class HotAirBalloon(
     private val bitmap: Bitmap,
     val fromLeft: Boolean
 ) {
-    private val speed = 3f // velocidad del globo
+    private val speed = 2f
 
-    fun update() {
-        if (fromLeft) x += speed else x -= speed
+    fun update(deltaTime: Float) {
+        if (fromLeft) x += speed * deltaTime * 30 else x -= speed * deltaTime * 30
     }
 
     fun draw(canvas: Canvas) {
@@ -25,6 +25,4 @@ class HotAirBalloon(
     fun isOffScreen(screenWidth: Int): Boolean {
         return if (fromLeft) x > screenWidth else x + width < 0
     }
-
-
 }

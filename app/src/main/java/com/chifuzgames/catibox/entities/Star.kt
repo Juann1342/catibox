@@ -12,17 +12,14 @@ class Star(
     val bitmap: Bitmap,
     private val speedY: Float = 8f
 ) {
-    private var speedX: Float = Random.nextFloat() * 6f - 3f
+    private var speedX: Float = Random.nextFloat() * 20f - 10f
 
-    fun update(screenWidth: Int, screenHeight: Int) {
-        x += speedX
-        y += speedY
+    fun update(deltaTime: Float, screenWidth: Int, screenHeight: Int) {
+        x += speedX * deltaTime * 20
+        y += speedY * deltaTime * 20
 
-        // Rebotar en los bordes laterales
         if (x < 0f) { x = 0f; speedX = -speedX }
         if (x + width > screenWidth) { x = (screenWidth - width).toFloat(); speedX = -speedX }
-
-        //evitar que salga por arriba
         if (y < 0f) y = 0f
     }
 
@@ -40,7 +37,7 @@ class Star(
         return x < right && x + width > left && y < bottom && y + height > top
     }
 
-    fun isOffScreen( screenHeight: Int): Boolean {
+    fun isOffScreen(screenHeight: Int): Boolean {
         return y > screenHeight
     }
 }
