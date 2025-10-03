@@ -6,11 +6,11 @@ import android.view.SurfaceHolder
 class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView: GameView) : Thread() {
 
     @Volatile
-    private var running = false
+    var running = false
     private val targetFPS = 30 //define fps del juego
     private val targetTime = (1000 / targetFPS).toLong()
 
-    fun setRunning(isRunning: Boolean) {
+    fun stopThread(isRunning: Boolean) {
         running = isRunning
     }
 
@@ -20,11 +20,14 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
 
         while (running) {
             val startTime = System.nanoTime()
-            val deltaTime = (startTime - lastTime) / 1_000_000_000f // segundos
+            val deltaTime = (startTime - lastTime) / 1_000_000_000f
             lastTime = startTime
 
             canvas = null
             try {
+                // <-- chequeo de validez
+                if (!surfaceHolder.surface.isValid) continue
+
                 canvas = surfaceHolder.lockCanvas()
                 synchronized(surfaceHolder) {
                     gameView.update(deltaTime)
@@ -34,7 +37,9 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
                 e.printStackTrace()
             } finally {
                 if (canvas != null) {
-                    surfaceHolder.unlockCanvasAndPost(canvas)
+                    try {
+                        surfaceHolder.unlockCanvasAndPost(canvas)
+                    } catch (_: Exception) {}
                 }
             }
 
@@ -43,5 +48,6 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
             if (waitTime > 0) sleep(waitTime)
         }
     }
+
 
 }

@@ -39,8 +39,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         const val UFO_WIDTH_RATIO = 3.5f
         const val UFO_HEIGHT_MULT = 0.55f
 
-        var BALLOON_SCORE_INTERVAL = 100
-        var PLANE_SCORE_INTERVAL = 190
+        var BALLOON_SCORE_INTERVAL = 120
+        var PLANE_SCORE_INTERVAL = 200
         var UFO_SCORE_INTERVAL = 310
     }
     private lateinit var hud: HUD
@@ -125,7 +125,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     var ufoSpawned = false
     private var lastBalloonScore = 0
 
-
+    private var lastTouchX = 0f
+    private var isDragging = false
     // --- Background / Grass per level (crossfade) ---
     // resource names per level (we'll resolve ids at runtime; fallback to default if missing)
     private val backgroundNames = listOf("background", "background2", "background3", "background4", "background5","background6", "background7", "background8", "background9", "background10")
@@ -138,6 +139,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var currentGrass: Bitmap? = null
     private var nextGrass: Bitmap? = null
     private var grassTransition = false
+
+    private val catBitmapCache = mutableMapOf<Int, Bitmap>()
 
 
     // --- Racha (streak) ---
@@ -214,13 +217,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
 
 
+        val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
+        val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
+        playerBitmap = decodeSampledBitmapFromResource(R.drawable.player, playerWidth, playerHeight)
+        playerBonusBitmap = decodeSampledBitmapFromResource(R.drawable.player_bonus, playerWidth, playerHeight)
+        playerSadBitmap = decodeSampledBitmapFromResource(R.drawable.player_sad, playerWidth, playerHeight)
+        playerHappyBitmap = decodeSampledBitmapFromResource(R.drawable.player_happy, playerWidth, playerHeight)
+        playerOuchBitmap = decodeSampledBitmapFromResource(R.drawable.player_ouch, playerWidth, playerHeight)
+        catBitmap = decodeSampledBitmapFromResource(R.drawable.cat, (screenWidth / CAT_BASE_RATIO).toInt(), (screenWidth / CAT_BASE_RATIO).toInt())
 
-        playerBitmap = BitmapFactory.decodeResource(resources, R.drawable.player)
-        playerBonusBitmap = BitmapFactory.decodeResource(resources,R.drawable.player_bonus)
-        playerSadBitmap= BitmapFactory.decodeResource(resources,R.drawable.player_sad)
-        playerHappyBitmap = BitmapFactory.decodeResource(resources,R.drawable.player_happy)
-        playerOuchBitmap = BitmapFactory.decodeResource(resources,R.drawable.player_ouch)
-        catBitmap = BitmapFactory.decodeResource(resources, R.drawable.cat)
 
         // load defaults (kept for compatibility)
         backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.background)
@@ -233,8 +238,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         fruitBitmap = BitmapFactory.decodeResource(resources, R.drawable.fruit)
         starBitmap = BitmapFactory.decodeResource(resources, R.drawable.star)
 
-        val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
-        val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
+     //   val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
+    //    val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
         val balloonWidth = (screenWidth / BALLOON_WIDTH_RATIO).toInt()
         val balloonHeight = (balloonWidth * BALLOON_HEIGHT_MULT).toInt()
         val planeWidth = (screenWidth / PLANE_WIDTH_RATIO).toInt()
@@ -242,7 +247,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
 
-        playerBitmap = playerBitmap.scale(playerWidth, playerHeight, false)
+      //  playerBitmap = playerBitmap.scale(playerWidth, playerHeight, false)
         grassBitmap = grassBitmap.scale(screenWidth + 100, 400, false)
         balloonBitmap = balloonBitmap.scale(balloonWidth, balloonHeight, false)
         planeBitmap = planeBitmap.scale(planeWidth, planeHeight, false)
@@ -250,10 +255,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         bootBitmap = bootBitmap.scale(balloonWidth / 3, balloonHeight / 3, false)
         fruitBitmap = fruitBitmap.scale(60, 60, false)
         starBitmap = starBitmap.scale(60, 60, false)
-        playerBonusBitmap = playerBonusBitmap.scale(playerWidth, playerHeight, false)
-        playerSadBitmap = playerSadBitmap.scale(playerWidth, playerHeight, false)
-        playerHappyBitmap = playerHappyBitmap.scale(playerWidth, playerHeight, false)
-        playerOuchBitmap = playerOuchBitmap.scale(playerWidth, playerHeight, false)
 
         // init player
         player = Player(
@@ -275,16 +276,23 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
         // Initialize current background/grass from the default (keeps compatibility)
-        currentBackground =
-            BitmapFactory.decodeResource(resources, getDrawableIdByName(backgroundNames[0]))
-                .scale(screenWidth, screenHeight, false)
+        currentBackground = decodeSampledBitmapFromResource(getDrawableIdByName(backgroundNames[0]), screenWidth, screenHeight, preferRgb565 = false)
+// preferRgb565 = false si querés conservar alfa o mejor color en el fondo
+        currentGrass = decodeSampledBitmapFromResource(getGrassIdByName(grassNames[0]), screenWidth + 100, 400)
 
-        currentGrass = BitmapFactory.decodeResource(resources, getDrawableIdByName(grassNames[0]))
-            .scale(screenWidth + 100, 400, false)
 
         thread = GameThread(holder, this)
-        thread?.setRunning(true)
+        thread?.stopThread(true)
         thread?.start()
+    }
+
+
+    private fun getCatBitmapForWidth(width: Int): Bitmap {
+        return catBitmapCache[width] ?: run {
+            val bmp = catBitmap.scale(width, width, false)
+            catBitmapCache[width] = bmp
+            bmp
+        }
     }
 
     @SuppressLint("DiscouragedApi")
@@ -301,16 +309,33 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
     override fun surfaceDestroyed(holder: SurfaceHolder) {
+        // 1. Detener hilo
         var retry = true
-        thread?.setRunning(false)
+        thread?.stopThread(false)
         while (retry) {
             try {
                 thread?.join()
                 retry = false
             } catch (_: InterruptedException) {}
         }
-        thread = null // <- importante
+        thread = null
+
+        // 2. Reciclar bitmaps sin reflexión
+        listOf(
+            playerBitmap, playerBonusBitmap, playerSadBitmap, playerHappyBitmap, playerOuchBitmap,
+            catBitmap, backgroundBitmap, grassBitmap, balloonBitmap, planeBitmap,
+            ufoBitmap, bootBitmap, fruitBitmap, starBitmap
+        ).forEach { bmp ->
+            bmp?.takeIf { !it.isRecycled }?.recycle()
+        }
+
+        // 3. Limpiar caches
+        catBitmapCache.values.forEach { it.recycle() }
+        catBitmapCache.clear()
     }
+
+
+
 
     // Load next level assets into nextBackground/nextGrass and enable transitions
     private fun loadLevelAssets(nextLevel: Int) {
@@ -325,7 +350,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
 
         nextGrass = BitmapFactory.decodeResource(resources, grassId)
-        nextGrass = nextGrass!!.scale(screenWidth + 100, 400, false)
+        nextGrass = nextGrass!!.scale(screenWidth + 150, 400, false)
 
         // enable transitions
         backgroundTransition = true
@@ -342,6 +367,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 levelTransition = false
                 catsSpawned = 0
                 if (backgroundTransition && nextBackground != null) {
+                    currentBackground?.recycle()
                     currentBackground = nextBackground
                     nextBackground = null
                     backgroundTransition = false
@@ -368,10 +394,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // --- Globo + Bota ---
         val balloonWidth = (screenWidth / BALLOON_WIDTH_RATIO).toInt()
         val balloonHeight = (balloonWidth * BALLOON_HEIGHT_MULT).toInt()
-        if (score > 0 && score % BALLOON_SCORE_INTERVAL == 0 && score != lastBalloonScore) {
+        if (score > 0 &&
+            score % BALLOON_SCORE_INTERVAL == 0 &&
+            score != lastBalloonScore &&
+            balloon == null) {
+
             val fromLeft = Random.nextBoolean()
             val xPos = if (fromLeft) -balloonWidth.toFloat() else screenWidth.toFloat()
             val yPos = Random.nextInt(80, (screenHeight * 0.35).toInt()).toFloat()
+
             balloon = HotAirBalloon(
                 x = xPos,
                 y = yPos,
@@ -380,9 +411,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 bitmap = balloonBitmap,
                 fromLeft = fromLeft
             )
-          //  lastBalloonScore = score // <- importante, evita repetir en el mismo múltiplo
 
-
+            lastBalloonScore = score  // <- actualizar para no repetir
         }
 
 
@@ -406,10 +436,11 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                         )
                     )
                     b.hasDroppedBoot = true
-                    if (b.isOffScreen(screenWidth)) balloon = null
 
                 }
             }
+            if (b.isOffScreen(screenWidth)) balloon = null
+
         }
 
         // --- Avión + Fruta ---
@@ -465,7 +496,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
         if (score > 0 && score % UFO_SCORE_INTERVAL == 0 && ufo == null) {
             if(!ufoSpawned){
-                UFO_SCORE_INTERVAL = UFO_SCORE_INTERVAL - 100
+                UFO_SCORE_INTERVAL = UFO_SCORE_INTERVAL - 60
                 ufoSpawned = true
             }
             val fromLeft = Random.nextBoolean()
@@ -508,10 +539,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             if (s.isOffScreen(screenHeight)) activeStar = null
         }
 
-
-       // activeFruit?.update(deltaTime, screenWidth)
-      //  ufo?.update(deltaTime)
-        //activeStar?.update(deltaTime, screenWidth, screenHeight)
 
         val catIterator = cats.iterator()
         while (catIterator.hasNext()) {
@@ -686,24 +713,30 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
     @SuppressLint("ClickableViewAccessibility")
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
-        val y = event.y
 
         // Primero, que el HUD maneje el toque (mute/pause)
-        if (hud.handleTouch(x, y, event)) return true
+        if (hud.handleTouch(x, event.y, event)) return true
 
-        // Solo si no es game over
         if (!gameOver) {
             when (event.action) {
-                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    // Movimiento del jugador (solo si no tocamos un botón)
-                    if (!hud.isTouchingButton(x, y)) {
-                        player?.x = x - player!!.width / 2f
-                        if (player!!.x < 0f) player!!.x = 0f
-                        if (player!!.x + player!!.width > screenWidth.toFloat())
-                            player!!.x = screenWidth.toFloat() - player!!.width
+                MotionEvent.ACTION_DOWN -> {
+                    lastTouchX = x
+                    isDragging = true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    if (isDragging) {
+                        val deltaX = x - lastTouchX
+                        player?.x = (player?.x ?: 0f) + deltaX
+                        // Limitar al ancho de pantalla
+                        player?.x = player!!.x.coerceIn(0f, screenWidth.toFloat() - player!!.width)
+                        lastTouchX = x
                     }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isDragging = false
                 }
             }
         }
@@ -732,7 +765,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val startY = -catHeight.toFloat()
 
             // crear cat y velocidad en píxeles/segundo
-            val catBitmapScaled = catBitmap.scale(catWidth, catHeight, false)
+            val catBitmapScaled = getCatBitmapForWidth(catWidth)
+
             cats.add(
                 Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
                     SoundManager.playSound("catAngry")
@@ -759,14 +793,60 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
 
-    fun pauseThread() { thread?.setRunning(false) }
+    fun pauseThread() { thread?.stopThread(false) }
 
     fun resumeThread() {
         if (thread == null || !thread!!.isAlive) {
             thread = GameThread(holder, this)
-            thread?.setRunning(true)
+            thread?.stopThread(true)
             thread?.start()
         }
     }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
+
+    private fun decodeSampledBitmapFromResource(resId: Int, reqWidth: Int, reqHeight: Int, preferRgb565: Boolean = true): Bitmap {
+        // 1) solo bounds
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeResource(resources, resId, options)
+
+        // 2) calcular sample
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+
+        // 3) decodificar real
+        options.inJustDecodeBounds = false
+        if (preferRgb565) {
+            options.inPreferredConfig = Bitmap.Config.RGB_565
+        } else {
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        }
+
+        val decoded = BitmapFactory.decodeResource(resources, resId, options)
+
+        // 4) si el tamaño exacto no coincide, escalar y reciclar original
+        if (decoded.width != reqWidth || decoded.height != reqHeight) {
+            val scaled = Bitmap.createScaledBitmap(decoded, reqWidth, reqHeight, true)
+            if (scaled != decoded) {
+                decoded.recycle()
+            }
+            return scaled
+        }
+        return decoded
+    }
+
 
 }
