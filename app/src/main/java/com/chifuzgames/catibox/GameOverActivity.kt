@@ -2,10 +2,14 @@ package com.chifuzgames.catibox
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.chifuzgames.catibox.ads.AdManager
+import com.google.android.gms.ads.AdRequest
 
 class GameOverActivity : AppCompatActivity() {
 
@@ -16,6 +20,8 @@ class GameOverActivity : AppCompatActivity() {
         // Obtener el puntaje y la racha desde el Intent
         val score = intent.getIntExtra("SCORE", 0)
         val maxStreak = intent.getIntExtra("MAX_STREAK", 0)
+        val level = intent.getIntExtra("LEVEL", 0)
+
 
         // Obtener valores históricos desde SharedPreferences
         val prefs = getSharedPreferences("CATIBOX_PREFS", MODE_PRIVATE)
@@ -23,6 +29,8 @@ class GameOverActivity : AppCompatActivity() {
         val highStreak = prefs.getInt("MAX_STREAK_HIST", 0)
 
         // Mostrar puntaje actual
+        findViewById<TextView>(R.id.levelTextView).text = getString(R.string.score_text, level)
+
         findViewById<TextView>(R.id.scoreTextView).text = getString(R.string.score_text, score)
         // Mostrar racha actual
         findViewById<TextView>(R.id.streakTextView).text = getString(R.string.max_streak_text, maxStreak)
@@ -65,6 +73,21 @@ class GameOverActivity : AppCompatActivity() {
             }
         })
 
+        showBannerAd()
     }
+
+    private fun showBannerAd() {
+        val container = findViewById<LinearLayout>(R.id.bannerGameOverContainer)
+        AdManager.bannerView?.let { banner ->
+            // Si el banner ya estaba agregado en otra vista, lo removemos
+            if (banner.parent != null) (banner.parent as ViewGroup).removeView(banner)
+            // Lo agregamos al contenedor
+            container.addView(banner)
+            //  Cargar anuncio si no lo hiciste antes
+            banner.loadAd(AdRequest.Builder().build())
+        }
+    }
+
+
 
 }

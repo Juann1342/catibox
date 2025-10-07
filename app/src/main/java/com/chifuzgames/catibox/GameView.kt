@@ -595,6 +595,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val isNewHighScore = score > maxScoreHist
             val isNewHighStreak = maxStreak > maxStreakHist
 
+            prefs.edit { putInt("CURRENT_SCORE", score) }
+            prefs.edit { putInt("CURRENT_STREAK", maxStreak) }
+            prefs.edit { putInt("CURRENT_STREAK", level) }
+
+
+
+
+
 // Comparar y actualizar explícitamente
 
             if (score > maxScoreHist) {
@@ -608,6 +616,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val intent = android.content.Intent(context, GameOverActivity::class.java)
             intent.putExtra("SCORE", score)
             intent.putExtra("MAX_STREAK", maxStreak)  //
+            intent.putExtra("LEVEL", level)
             intent.putExtra("NEW_HIGH_SCORE", isNewHighScore)
             intent.putExtra("NEW_HIGH_STREAK", isNewHighStreak)
             context.startActivity(intent)
