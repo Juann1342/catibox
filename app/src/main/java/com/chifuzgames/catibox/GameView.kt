@@ -114,7 +114,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private val DOUBLE_POINTS_DURATION = 10 * 60 // 10 segundos * 60 fps
 
     // --- Niveles ---
-    private var level = 1
+    var level = 1
     private var catsSpawned = 0
     private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26, Int.MAX_VALUE) // nivel 10 sin límite
     private var levelTransition = false
@@ -153,9 +153,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Dificultad ajustable ---
     private var initialLives = 5
     // Vidas iniciales del jugador al comenzar la partida.
+    private var initialLevel = 1  // <--- nivel inicial configurable
+
+    private var initialScore = 0      // ← puntaje inicial configurable
+    private var initialStreak = 0     // ← racha inicial configurable
 
 
-//dificultad por gato
+
+    //dificultad por gato
     private var difficultyIncreasePerCat = 0.05f
     //cada cuantos gatos aumenta
 
@@ -201,9 +206,13 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         hud = HUD(context)
         hud.initIcons()
         hud.lives = initialLives
-        hud.score = 0
-        hud.streak = 0
-        hud.maxStreak = 0
+        hud.score = initialScore
+        hud.streak = initialStreak
+        hud.maxStreak = initialStreak
+
+        score = initialScore
+        streak = initialStreak
+        maxStreak = initialStreak
 
         screenWidth = width
         screenHeight = height
@@ -265,7 +274,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // inicializar línea de partida
 // inicializar línea de partida y dificultad del nivel 1
         lives = initialLives
-        level = 1
+        level = initialLevel
         catsSpawned = 0
         levelTransition = false
 
@@ -275,10 +284,23 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
         // Initialize current background/grass from the default (keeps compatibility)
-        currentBackground = decodeSampledBitmapFromResource(getDrawableIdByName(backgroundNames[0]), screenWidth, screenHeight, preferRgb565 = false)
+       // currentBackground = decodeSampledBitmapFromResource(getDrawableIdByName(backgroundNames[0]), screenWidth, screenHeight, preferRgb565 = false)
 // preferRgb565 = false si querés conservar alfa o mejor color en el fondo
-        currentGrass = decodeSampledBitmapFromResource(getGrassIdByName(grassNames[0]), screenWidth + 100, 400)
+    //    currentGrass = decodeSampledBitmapFromResource(getGrassIdByName(grassNames[0]), screenWidth + 100, 400)
+// Ajustar dificultad y parámetros al nivel inicial
+        val idx = (initialLevel - 1).coerceIn(0, levelDifficulty.size - 1)
+        difficultyMultiplier = levelDifficulty[idx].first
+        catSpawnIntervalMs = (levelDifficulty[idx].second / 60f * 1000).toLong()
 
+// Cargar los fondos correspondientes al nivel inicial
+        currentBackground = decodeSampledBitmapFromResource(
+            getDrawableIdByName(backgroundNames.getOrElse(idx) { backgroundNames.last() }),
+            screenWidth, screenHeight, preferRgb565 = false
+        )
+        currentGrass = decodeSampledBitmapFromResource(
+            getGrassIdByName(grassNames.getOrElse(idx) { grassNames.last() }),
+            screenWidth + 100, 400
+        )
 
         thread = GameThread(holder, this)
         thread?.stopThread(true)
@@ -595,11 +617,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val isNewHighScore = score > maxScoreHist
             val isNewHighStreak = maxStreak > maxStreakHist
 
-            prefs.edit { putInt("CURRENT_SCORE", score) }
-            prefs.edit { putInt("CURRENT_STREAK", maxStreak) }
-            prefs.edit { putInt("CURRENT_STREAK", level) }
-
-
+          //  prefs.edit { putInt("CURRENT_SCORE", score) }
+        //    prefs.edit { putInt("CURRENT_STREAK", maxStreak) }
+        //    prefs.edit { putInt("CURRENT_STREAK", level) }
 
 
 
@@ -758,6 +778,12 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         if (SoundManager.isMuted) backgroundPlayer.setVolume(0f, 0f)
     }
 
+    fun setStats(startLives: Int = 5, startLevel:Int = 1, startScore:Int = 0){
+        initialLives=startLives
+        initialLevel = startLevel
+        initialScore=startScore
+      //  initialStreak=startStreak
+    }
     /**
      * Intenta crear y añadir un gato. Devuelve true si efectivamente se creó y añadió.
      * Implementa hasta N intentos para encontrar una posición válida (no conflictiva).

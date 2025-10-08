@@ -17,10 +17,18 @@ class GameActivity : AppCompatActivity() {
     private lateinit var gameView: GameView
     private lateinit var backgroundMusic: MediaPlayer
 
+
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        val initialLives = intent.getIntExtra("INITIAL_LIVES", 5)
+        val initialScore = intent.getIntExtra("INITIAL_SCORE", 0)
+    //    val initialStreak = intent.getIntExtra("INITIAL_STREAK", 0)
+        val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 1)
+
 
 
         // Creamos GameView
@@ -33,6 +41,7 @@ class GameActivity : AppCompatActivity() {
 
         // Pasamos la música al GameView
         gameView.setBackgroundPlayer(backgroundMusic)
+        gameView.setStats(initialLives,initialLevel,initialScore)
 
         setContentView(gameView)
 
@@ -40,15 +49,15 @@ class GameActivity : AppCompatActivity() {
         enableFullscreen()
 
         // Observamos si termina el juego
-        gameView.onGameOverListener = {
+     /*   gameView.onGameOverListener = {
             saveHighScores(gameView.score, gameView.maxStreak)
-
             val intent = Intent(this, GameOverActivity::class.java)
             intent.putExtra("SCORE", gameView.score)
             intent.putExtra("MAX_STREAK", gameView.maxStreak)
+            intent.putExtra("LEVEL",gameView.level)
             startActivity(intent)
             finish()
-        }
+        }*/
     }
 
     @Suppress("DEPRECATION")
@@ -92,7 +101,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     // --- Función para guardar score máximo y racha máxima ---
-    private fun saveHighScores(score: Int, maxStreak: Int) {
+  /*  private fun saveHighScores(score: Int, maxStreak: Int) {
         val prefs = getSharedPreferences("CATIBOX_PREFS",MODE_PRIVATE)
         prefs.edit {
 
@@ -103,5 +112,5 @@ class GameActivity : AppCompatActivity() {
             if (maxStreak > highestStreak) putInt("HIGH_STREAK", maxStreak)
 
         }
-    }
+    }*/
 }

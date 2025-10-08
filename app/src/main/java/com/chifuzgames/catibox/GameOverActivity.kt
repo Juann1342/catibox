@@ -1,11 +1,14 @@
 package com.chifuzgames.catibox
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.chifuzgames.catibox.ads.AdManager
@@ -55,9 +58,14 @@ class GameOverActivity : AppCompatActivity() {
             extraMessageStreak.visibility = View.VISIBLE
         }
 
+        val intent = Intent(this, GameActivity::class.java)
+
         // Botón volver a jugar
         findViewById<Button>(R.id.playAgainButton).setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra("INITIAL_LEVEL",1)
+            intent.putExtra("INITIAL_LIVES",5)
+            intent.putExtra("INITIAL_SCORE",0)
+          //  intent.putExtra("INITIAL_STREAK",0)
             startActivity(intent)
             finish()
         }
@@ -72,6 +80,69 @@ class GameOverActivity : AppCompatActivity() {
                 finish()
             }
         })
+
+
+        findViewById<Button>(R.id.reviveCurrentLevelButton).setOnClickListener {
+            AdManager.showInterstitial(this) {
+              /*  prefs.edit().apply {
+                    putInt("CURRENT_LIVES", 1)
+                    apply()
+                }*/
+                val intent = Intent(this, GameActivity::class.java)
+                intent.putExtra("INITIAL_LEVEL",level)
+                intent.putExtra("INITIAL_LIVES",1)
+                intent.putExtra("INITIAL_SCORE",score)
+            //    intent.putExtra("INITIAL_STREAK",maxStreak)
+                startActivity(intent)
+                finish()
+            }
+        }
+
+        findViewById<Button>(R.id.reviveNextLevelButton).setOnClickListener {
+            var initialLives: Int
+            var nextLevel = 0
+
+            if (level != 10) {
+                nextLevel = level + 1
+                initialLives = 3
+
+                // Mostrar anuncio directamente si no es el último nivel
+                AdManager.showRewarded(this) {
+                    val intent = Intent(this, GameActivity::class.java)
+                    intent.putExtra("INITIAL_LEVEL", nextLevel)
+                    intent.putExtra("INITIAL_LIVES", initialLives)
+                    intent.putExtra("INITIAL_SCORE", score)
+                 //   intent.putExtra("INITIAL_STREAK", maxStreak)
+                    startActivity(intent)
+                    finish()
+                }
+
+            } else {
+                nextLevel = level
+                initialLives = 8
+
+                // Mostrar dialog antes del anuncio
+                val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Último nivel")
+                    .setMessage("“Has llegado al último nivel. Disfruta 8 vidas extra como recompensa.")
+                    .setPositiveButton("OK") { _, _ ->
+                        AdManager.showRewarded(this) {
+                            val intent = Intent(this, GameActivity::class.java)
+                            intent.putExtra("INITIAL_LEVEL", nextLevel)
+                            intent.putExtra("INITIAL_LIVES", initialLives)
+                            intent.putExtra("INITIAL_SCORE", score)
+                      //      intent.putExtra("INITIAL_STREAK", maxStreak)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                    .setCancelable(false)
+                    .create()
+                dialog.show()
+            }
+        }
+
+
 
         showBannerAd()
     }
