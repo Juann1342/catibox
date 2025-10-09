@@ -96,6 +96,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var lives = 5
     private var difficultyMultiplier = 2f
 
+    private var resetDifficultMultiplier = 2f
+
     // Música de fondo
 
     // Estado game over
@@ -166,16 +168,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
     private val levelDifficulty = listOf(
-        Pair(0.5f, 110), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
-        Pair(0.7f, 100), // nivel 2: más rápido, menos intervalo
-        Pair(0.9f, 90), // nivel 3
-        Pair(1f, 80), // nivel 4
-        Pair(1.2f, 70),  // nivel 5
-        Pair(1.4f, 60),  // nivel 6
-        Pair(1.6f, 52),  // nivel 7
-        Pair(1.8f, 45),  // nivel 8
-        Pair(1.9f, 40),  // nivel 9
-        Pair(2f, 35),  // nivel 10+
+        Pair(0.6f, 110), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(1f, 80), // nivel 2: más rápido, menos intervalo
+        Pair(1.2f, 70), // nivel 3
+        Pair(1.5f, 50), // nivel 4
+        Pair(1.8f, 40),  // nivel 5
+        Pair(2.0f, 30),  // nivel 6
+        Pair(2.2f, 29),  // nivel 7
+        Pair(2.3f, 28),  // nivel 8
+        Pair(2.4f, 27),  // nivel 9
+        Pair(1f, 40),  // nivel 10+ bonus
 
     )
 
@@ -577,6 +579,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
                 // dificultad
                 difficultyMultiplier += difficultyIncreasePerCat
+
             }
         }
 
@@ -617,9 +620,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val isNewHighScore = score > maxScoreHist
             val isNewHighStreak = maxStreak > maxStreakHist
 
-          //  prefs.edit { putInt("CURRENT_SCORE", score) }
-        //    prefs.edit { putInt("CURRENT_STREAK", maxStreak) }
-        //    prefs.edit { putInt("CURRENT_STREAK", level) }
 
 
 
@@ -655,6 +655,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 difficultyMultiplier = levelDifficulty[level - 1].first
                 catSpawnIntervalMs = (levelDifficulty[level - 1].second / 60f * 1000).toLong()
             }
+            applyLevelSettings(level)
+
         }
     }
 
@@ -803,11 +805,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
             cats.add(
                 Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
-                    SoundManager.playSound("catAngry")
-                    streak = 0
-                    player?.state = PlayerState.SAD
-                    lives--
-                    player?.stateTimer = 1.0f // 1 segundo
+
+                    if (level != 10){
+                        SoundManager.playSound("catAngry")
+                        streak = 0
+                        player?.state = PlayerState.SAD
+                        lives--
+                        player?.stateTimer = 1.0f // 1 segundo
+                    }
                 }
             )
             return true
@@ -881,6 +886,15 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
         return decoded
     }
+
+    //resetea la dificultad en los niveles, se usa para despues del bonus
+    private fun applyLevelSettings(level: Int) {
+        val idx = (level - 1).coerceIn(0, levelDifficulty.size - 1)
+        difficultyMultiplier = levelDifficulty[idx].first
+        catSpawnIntervalMs = (levelDifficulty[idx].second / 60f * 1000).toLong()
+        lastCatSpawnTimeMs = System.currentTimeMillis()
+    }
+
 
     fun abandonGame() {
         if (gameOver) return  // si ya terminó, no hacemos nada

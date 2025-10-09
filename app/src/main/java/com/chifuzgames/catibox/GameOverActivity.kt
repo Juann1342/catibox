@@ -102,7 +102,7 @@ class GameOverActivity : AppCompatActivity() {
             var initialLives: Int
             var nextLevel = 0
 
-            if (level != 10) {
+            if (level != 8) {
                 nextLevel = level + 1
                 initialLives = 3
 
@@ -119,19 +119,18 @@ class GameOverActivity : AppCompatActivity() {
 
             } else {
                 nextLevel = level
-                initialLives = 8
+                initialLives = 10
 
                 // Mostrar dialog antes del anuncio
                 val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("Último nivel")
-                    .setMessage("“Has llegado al último nivel. Disfruta 8 vidas extra como recompensa.")
+                    .setMessage("“Has llegado al último nivel de este mundo!. Disfruta 10 vidas extra como recompensa.")
                     .setPositiveButton("OK") { _, _ ->
                         AdManager.showRewarded(this) {
                             val intent = Intent(this, GameActivity::class.java)
                             intent.putExtra("INITIAL_LEVEL", nextLevel)
                             intent.putExtra("INITIAL_LIVES", initialLives)
                             intent.putExtra("INITIAL_SCORE", score)
-                      //      intent.putExtra("INITIAL_STREAK", maxStreak)
                             startActivity(intent)
                             finish()
                         }

@@ -26,10 +26,7 @@ class GameActivity : AppCompatActivity() {
 
         val initialLives = intent.getIntExtra("INITIAL_LIVES", 5)
         val initialScore = intent.getIntExtra("INITIAL_SCORE", 0)
-    //    val initialStreak = intent.getIntExtra("INITIAL_STREAK", 0)
         val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 1)
-
-
 
         // Creamos GameView
         gameView = GameView(this)
@@ -48,16 +45,7 @@ class GameActivity : AppCompatActivity() {
         // Activar fullscreen
         enableFullscreen()
 
-        // Observamos si termina el juego
-     /*   gameView.onGameOverListener = {
-            saveHighScores(gameView.score, gameView.maxStreak)
-            val intent = Intent(this, GameOverActivity::class.java)
-            intent.putExtra("SCORE", gameView.score)
-            intent.putExtra("MAX_STREAK", gameView.maxStreak)
-            intent.putExtra("LEVEL",gameView.level)
-            startActivity(intent)
-            finish()
-        }*/
+
     }
 
     @Suppress("DEPRECATION")
@@ -100,17 +88,4 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    // --- Función para guardar score máximo y racha máxima ---
-  /*  private fun saveHighScores(score: Int, maxStreak: Int) {
-        val prefs = getSharedPreferences("CATIBOX_PREFS",MODE_PRIVATE)
-        prefs.edit {
-
-            val highestScore = prefs.getInt("HIGH_SCORE", 0)
-            if (score > highestScore) putInt("HIGH_SCORE", score)
-
-            val highestStreak = prefs.getInt("HIGH_STREAK", 0)
-            if (maxStreak > highestStreak) putInt("HIGH_STREAK", maxStreak)
-
-        }
-    }*/
 }

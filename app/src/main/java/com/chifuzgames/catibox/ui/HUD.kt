@@ -69,6 +69,9 @@ class HUD(private val context: Context) {
         val levelX = 30f // ajustar la posición
         val levelY = 150f
         canvas.drawText(levelText, levelX, levelY, paint)
+
+
+
         // Score y Streak
         canvas.drawText(
             context.getString(R.string.score_canvas, score),
