@@ -32,9 +32,9 @@ import androidx.core.content.edit
 class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
     companion object {
-        const val PLAYER_WIDTH_RATIO = 5f
+        const val PLAYER_WIDTH_RATIO = 4f
         const val PLAYER_HEIGHT_MULT = 1.8f
-        const val CAT_BASE_RATIO = 8f
+        const val CAT_BASE_RATIO = 7f
         const val BALLOON_WIDTH_RATIO = 4f
         const val BALLOON_HEIGHT_MULT = 1.65f
         const val PLANE_WIDTH_RATIO = 3.5f
@@ -51,11 +51,29 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
     // Bitmaps
+
+
+
     private lateinit var playerBitmap: Bitmap
+
+    private lateinit var playerWalkBitmap: Bitmap
+
     private lateinit var playerBonusBitmap: Bitmap
+
+    private lateinit var playerBonusWalkBitmap: Bitmap
     private lateinit var playerSadBitmap : Bitmap
+
+    private lateinit var playerSadWalkBitmap : Bitmap
     private lateinit var playerOuchBitmap : Bitmap
+
+    private lateinit var playerOuchWalkBitmap : Bitmap
     private lateinit var playerHappyBitmap : Bitmap
+
+    private lateinit var playerHappyWalkBitmap : Bitmap
+
+    private lateinit var playerSpaceBitmap: Bitmap
+    private lateinit var playerSpaceWalkBitmap: Bitmap
+
     private lateinit var catBitmap: Bitmap
 
     private lateinit var backgroundBitmap: Bitmap
@@ -233,10 +251,17 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
         val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
         playerBitmap = decodeSampledBitmapFromResource(R.drawable.player, playerWidth, playerHeight)
+        playerWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_walk, playerWidth, playerHeight)
         playerBonusBitmap = decodeSampledBitmapFromResource(R.drawable.player_bonus, playerWidth, playerHeight)
+        playerBonusWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_bonus_walk, playerWidth, playerHeight)
         playerSadBitmap = decodeSampledBitmapFromResource(R.drawable.player_sad, playerWidth, playerHeight)
+        playerSadWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_sad_walk, playerWidth, playerHeight)
         playerHappyBitmap = decodeSampledBitmapFromResource(R.drawable.player_happy, playerWidth, playerHeight)
+        playerHappyWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_happy_walk, playerWidth, playerHeight)
         playerOuchBitmap = decodeSampledBitmapFromResource(R.drawable.player_ouch, playerWidth, playerHeight)
+        playerOuchWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_ouch_walk, playerWidth, playerHeight)
+        playerSpaceBitmap = decodeSampledBitmapFromResource(R.drawable.player_space,playerWidth,playerHeight)
+        playerSpaceWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_space_walk,playerWidth,playerHeight)
         catBitmap = decodeSampledBitmapFromResource(R.drawable.cat, (screenWidth / CAT_BASE_RATIO).toInt(), (screenWidth / CAT_BASE_RATIO).toInt())
 
 
@@ -271,6 +296,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             width = playerWidth,
             height = playerHeight
         )
+        player?.setWalkBitmap(playerWalkBitmap, playerOuchWalkBitmap,playerSadWalkBitmap, playerHappyWalkBitmap,playerBonusWalkBitmap,playerSpaceWalkBitmap)
+
         // inicializar línea de partida
 // inicializar línea de partida y dificultad del nivel 1
         lives = initialLives
@@ -334,7 +361,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // 2. Reciclar bitmaps sin reflexión
         listOf(
-            playerBitmap, playerBonusBitmap, playerSadBitmap, playerHappyBitmap, playerOuchBitmap,
+            playerBitmap, playerBonusBitmap, playerSadBitmap, playerHappyBitmap, playerOuchBitmap,playerSpaceBitmap,
             catBitmap, backgroundBitmap, balloonBitmap, planeBitmap,
             ufoBitmap, bootBitmap, fruitBitmap, starBitmap
         ).forEach { bmp ->
@@ -381,6 +408,16 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             }
             return
         }
+
+        if (level == 10 || level == 20){
+            player?.state = PlayerState.SPACE
+        }else{
+            when(player?.state) {
+                PlayerState.HAPPY, PlayerState.SAD, PlayerState.OUCH, PlayerState.DOUBLE_POINTS -> {} // dejar tal cual
+                else -> player?.state = PlayerState.NORMAL
+            }
+        }
+
 
         player?.update(deltaTime)
 
@@ -638,7 +675,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             doublePointsBitmap = playerBonusBitmap,
             sadBitmap = playerSadBitmap,
             happyBitmap = playerHappyBitmap,
-            ouchBitmap = playerOuchBitmap
+            ouchBitmap = playerOuchBitmap,
+            spaceBitmap = playerSpaceBitmap
         )
         for (boot in boots) boot.draw(canvas)
         balloon?.draw(canvas)
@@ -684,10 +722,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 MotionEvent.ACTION_DOWN -> {
                     lastTouchX = x
                     isDragging = true
+                    player?.isSliding = false  // no caminar solo por tocar
+
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (isDragging) {
                         val deltaX = x - lastTouchX
+                        // solo caminar si hay movimiento real
+                        player?.isSliding = deltaX != 0f
                         player?.x = (player?.x ?: 0f) + deltaX
                         // Limitar al ancho de pantalla
                         player?.x = player!!.x.coerceIn(0f, screenWidth.toFloat() - player!!.width)
@@ -696,6 +738,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     isDragging = false
+                    player?.isSliding = false     // actualizar player
+
                 }
             }
         }
