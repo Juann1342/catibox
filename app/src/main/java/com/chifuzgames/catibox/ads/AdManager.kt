@@ -2,128 +2,103 @@ package com.chifuzgames.catibox.ads
 
 import android.app.Activity
 import android.content.Context
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.Toast
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardItem
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.android.gms.ads.rewarded.RewardItem
 
 object AdManager {
 
-    // Banner reutilizable
-    var bannerView: AdView? = null
+    private const val BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
+    private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
+    private const val REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
 
-    // Interstitial y Rewarded
-    var interstitialAd: InterstitialAd? = null
-    var rewardedAd: RewardedAd? = null
+    private var bannerView: AdView? = null
 
-    private val bannerId = "ca-app-pub-3940256099942544/6300978111" // Banner de prueba
-    private val interstitialId = "ca-app-pub-3940256099942544/1033173712"
-    private val rewardedId = "ca-app-pub-3940256099942544/5224354917"
+    /** Mostrar banner de manera asíncrona */
+    fun showBanner(context: Context, container: LinearLayout) {
+        try {
+            if (bannerView == null) {
+                bannerView = AdView(context).apply {
+                    adUnitId = BANNER_ID
+                    setAdSize(AdSize.BANNER)
+                }
 
-    fun initialize(context: Context) {
-        loadBanner(context)
-        loadInterstitial(context)
-        loadRewarded(context)
-    }
+                bannerView?.adListener = object : AdListener() {
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        // no hacer toast para no molestar al usuario
+                    }
+                }
 
-    fun loadBanner(context: Context) {
-        if (bannerView == null) {
-            bannerView = AdView(context).apply {
-                adUnitId = bannerId
-                setAdSize(AdSize.BANNER)
-                loadAd(AdRequest.Builder().build())
+                bannerView?.loadAd(AdRequest.Builder().build())
             }
+
+            bannerView?.let { banner ->
+                if (banner.parent != null) (banner.parent as ViewGroup).removeView(banner)
+                container.addView(banner)
+            }
+        } catch (_: Exception) {
+            // Ignorar cualquier error silenciosamente
         }
     }
 
-    fun loadInterstitial(context: Context) {
-        val adRequest = AdRequest.Builder().build()
-        InterstitialAd.load(context, interstitialId, adRequest, object : InterstitialAdLoadCallback() {
-            override fun onAdLoaded(ad: InterstitialAd) {
-                interstitialAd = ad
-            }
-            override fun onAdFailedToLoad(error: LoadAdError) {
-                interstitialAd = null
-            }
-        })
+    fun destroyBanner() {
+        try {
+            bannerView?.destroy()
+            bannerView = null
+        } catch (_: Exception) {}
     }
 
-    fun loadRewarded(context: Context) {
-        val adRequest = AdRequest.Builder().build()
-        RewardedAd.load(context, rewardedId, adRequest, object : RewardedAdLoadCallback() {
-            override fun onAdLoaded(ad: RewardedAd) {
-                rewardedAd = ad
-            }
-            override fun onAdFailedToLoad(error: LoadAdError) {
-                rewardedAd = null
-            }
-        })
-    }
-
-    // 👉 Mostrar interstitial
+    /** Mostrar interstitial de manera segura y asíncrona */
     fun showInterstitial(activity: Activity, onAdClosed: () -> Unit) {
-        val ad = interstitialAd
-        if (ad != null && !activity.isFinishing && !activity.isDestroyed) {
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    interstitialAd = null
-                    loadInterstitial(activity)
-                    onAdClosed() // continuar después de cerrar el anuncio
-                }
+        try {
+            InterstitialAd.load(activity, INTERSTITIAL_ID, AdRequest.Builder().build(),
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(ad: InterstitialAd) {
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() { onAdClosed() }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) { onAdClosed() }
+                        }
+                        try {
+                            ad.show(activity)
+                        } catch (_: Exception) {
+                            onAdClosed()
+                        }
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    interstitialAd = null
-                    loadInterstitial(activity)
-                    onAdClosed() // continuar igual si falla
-                }
-
-                override fun onAdShowedFullScreenContent() {
-                    // Opcional: podés loguear o pausar música/juego
-                }
-            }
-
-            try {
-                ad.show(activity)
-            } catch (e: Exception) {
-                // Previene errores tipo IllegalArgumentException o WindowLeaked
-                interstitialAd = null
-                loadInterstitial(activity)
-                onAdClosed()
-            }
-
-        } else {
-            // Si no hay anuncio cargado o la activity está cerrándose, continuar igual
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        onAdClosed()
+                    }
+                })
+        } catch (_: Exception) {
             onAdClosed()
-            loadInterstitial(activity)
         }
     }
 
-
-    // 👉 Mostrar rewarded
+    /** Mostrar rewarded de manera segura y asíncrona */
     fun showRewarded(activity: Activity, onRewardEarned: () -> Unit) {
-        val ad = rewardedAd
-        if (ad != null && !activity.isFinishing && !activity.isDestroyed) {
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    rewardedAd = null
-                    loadRewarded(activity)
-                }
+        try {
+            RewardedAd.load(activity, REWARDED_ID, AdRequest.Builder().build(),
+                object : RewardedAdLoadCallback() {
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() { /* nada */ }
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) { /* nada */ }
+                        }
+                        try {
+                            ad.show(activity) { _: RewardItem -> onRewardEarned() }
+                        } catch (_: Exception) {}
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    rewardedAd = null
-                    loadRewarded(activity)
-                    onRewardEarned() // continuar igual si falla
-                }
-            }
-            ad.show(activity) { _: RewardItem ->
-                onRewardEarned()
-            }
-        } else {
-            onRewardEarned()
-            loadRewarded(activity)
-        }
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        // silencioso, no mostrar toast
+                    }
+                })
+        } catch (_: Exception) {}
     }
-
 }

@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -56,9 +58,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private lateinit var playerHappyBitmap : Bitmap
     private lateinit var catBitmap: Bitmap
 
-    // legacy single vars kept for compatibility (we'll use currentBackground/currentGrass for drawing)
     private lateinit var backgroundBitmap: Bitmap
-    private lateinit var grassBitmap: Bitmap
 
     private lateinit var muteIcon: Bitmap
     private lateinit var unmuteIcon: Bitmap
@@ -93,10 +93,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     var isAbandoned = false
 
     var score = 0
-    private var lives = 5
+    var lives = 5
     private var difficultyMultiplier = 2f
-
-    private var resetDifficultMultiplier = 2f
 
     // Música de fondo
 
@@ -107,8 +105,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Mute button
     private val muteButtonSize = 100f
 
-    // Callback Game Over
-    var onGameOverListener: (() -> Unit)? = null
 
     // --- Variables globales de GameView ---
     private var doublePointsActive = false
@@ -118,7 +114,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Niveles ---
     var level = 1
     private var catsSpawned = 0
-    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26, Int.MAX_VALUE) // nivel 10 sin límite
+    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26,40,12, 14, 16,18,20,22,24,26,28, Int.MAX_VALUE) // nivel 20 sin límite
     private var levelTransition = false
     private var levelTransitionTimer = 0f
 
@@ -131,18 +127,12 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     private var lastTouchX = 0f
     private var isDragging = false
-    // --- Background / Grass per level (crossfade) ---
     // resource names per level (we'll resolve ids at runtime; fallback to default if missing)
-    private val backgroundNames = listOf("background", "background2", "background3", "background4", "background5","background6", "background7", "background8", "background9", "background10")
-    private val grassNames = listOf("grass", "grass2", "grass3", "grass4", "grass5","grass6", "grass7", "grass8", "grass9", "grass10")
+    private val backgroundNames = listOf("background", "background2", "background3", "background4", "background5","background6", "background7", "background8", "background9", "background10","background11", "background12", "background13", "background14", "background15","background16", "background17", "background18", "background19", "background20")
 
     private var currentBackground: Bitmap? = null
     private var nextBackground: Bitmap? = null
     private var backgroundTransition = false
-
-    private var currentGrass: Bitmap? = null
-    private var nextGrass: Bitmap? = null
-    private var grassTransition = false
 
     private val catBitmapCache = mutableMapOf<Int, Bitmap>()
 
@@ -173,11 +163,21 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         Pair(1.2f, 70), // nivel 3
         Pair(1.5f, 50), // nivel 4
         Pair(1.8f, 40),  // nivel 5
-        Pair(2.0f, 30),  // nivel 6
-        Pair(2.2f, 29),  // nivel 7
-        Pair(2.3f, 28),  // nivel 8
-        Pair(2.4f, 27),  // nivel 9
-        Pair(1f, 40),  // nivel 10+ bonus
+        Pair(1.9f, 30),  // nivel 6
+        Pair(2.0f, 29),  // nivel 7
+        Pair(2.1f, 28),  // nivel 8
+        Pair(2.2f, 27),  // nivel 9
+        Pair(1f, 30),  // nivel 10+ bonus
+        Pair(1f, 80), // nivel 11
+        Pair(1.2f, 80), // nivel 12
+        Pair(1.5f, 70), // nivel 13
+        Pair(1.8f, 50), // nivel 14
+        Pair(1.9f, 40),  // nivel 15
+        Pair(2.0f, 30),  // nivel 16
+        Pair(2.1f, 29),  // nivel 17
+        Pair(2.2f, 28),  // nivel 18
+        Pair(2.3f, 27),  // nivel 19
+        Pair(1f, 30),  // nivel 20+ bonus
 
     )
 
@@ -242,7 +242,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // load defaults (kept for compatibility)
         backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.background)
-        grassBitmap = BitmapFactory.decodeResource(resources, R.drawable.grass)
 
         balloonBitmap = BitmapFactory.decodeResource(resources, R.drawable.hot_air_balloon)
         planeBitmap = BitmapFactory.decodeResource(resources, R.drawable.plane)
@@ -258,7 +257,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
 
-        grassBitmap = grassBitmap.scale(screenWidth + 100, 400, false)
         balloonBitmap = balloonBitmap.scale(balloonWidth, balloonHeight, false)
         planeBitmap = planeBitmap.scale(planeWidth, planeHeight, false)
         ufoBitmap = ufoBitmap.scale(ufoWidth, ufoHeight, false)
@@ -285,10 +283,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         catSpawnIntervalMs = (levelDifficulty[0].second / 60f * 1000).toLong()
 
 
-        // Initialize current background/grass from the default (keeps compatibility)
        // currentBackground = decodeSampledBitmapFromResource(getDrawableIdByName(backgroundNames[0]), screenWidth, screenHeight, preferRgb565 = false)
 // preferRgb565 = false si querés conservar alfa o mejor color en el fondo
-    //    currentGrass = decodeSampledBitmapFromResource(getGrassIdByName(grassNames[0]), screenWidth + 100, 400)
 // Ajustar dificultad y parámetros al nivel inicial
         val idx = (initialLevel - 1).coerceIn(0, levelDifficulty.size - 1)
         difficultyMultiplier = levelDifficulty[idx].first
@@ -299,10 +295,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             getDrawableIdByName(backgroundNames.getOrElse(idx) { backgroundNames.last() }),
             screenWidth, screenHeight, preferRgb565 = false
         )
-        currentGrass = decodeSampledBitmapFromResource(
-            getGrassIdByName(grassNames.getOrElse(idx) { grassNames.last() }),
-            screenWidth + 100, 400
-        )
+
 
         thread = GameThread(holder, this)
         thread?.stopThread(true)
@@ -324,11 +317,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         return if (id != 0) id else R.drawable.background // fallback to background if not found
     }
 
-    @SuppressLint("DiscouragedApi")
-    private fun getGrassIdByName(name: String): Int {
-        val id = resources.getIdentifier(name, "drawable", context.packageName)
-        return if (id != 0) id else R.drawable.grass // fallback
-    }
+
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -346,7 +335,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // 2. Reciclar bitmaps sin reflexión
         listOf(
             playerBitmap, playerBonusBitmap, playerSadBitmap, playerHappyBitmap, playerOuchBitmap,
-            catBitmap, backgroundBitmap, grassBitmap, balloonBitmap, planeBitmap,
+            catBitmap, backgroundBitmap, balloonBitmap, planeBitmap,
             ufoBitmap, bootBitmap, fruitBitmap, starBitmap
         ).forEach { bmp ->
             bmp.takeIf { !it.isRecycled }?.recycle()
@@ -360,24 +349,17 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
 
-    // Load next level assets into nextBackground/nextGrass and enable transitions
     private fun loadLevelAssets(nextLevel: Int) {
         val bgName = backgroundNames.getOrNull(nextLevel - 1) ?: backgroundNames.last()
-        val grassName = grassNames.getOrNull(nextLevel - 1) ?: grassNames.last()
 
         val bgId = getDrawableIdByName(bgName)
-        val grassId = getGrassIdByName(grassName)
 
-        // prepare nextBackground and nextGrass scaled to screen
+        // prepare nextBackground
         nextBackground = BitmapFactory.decodeResource(resources, bgId)
         nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
 
-        nextGrass = BitmapFactory.decodeResource(resources, grassId)
-        nextGrass = nextGrass!!.scale(screenWidth + 150, 400, false)
-
         // enable transitions
         backgroundTransition = true
-        grassTransition = true
     }
 
     fun update(deltaTime: Float) {
@@ -395,11 +377,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
                     nextBackground = null
                     backgroundTransition = false
                 }
-                if (grassTransition && nextGrass != null) {
-                    currentGrass = nextGrass
-                    nextGrass = null
-                    grassTransition = false
-                }
+
             }
             return
         }
@@ -606,42 +584,10 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // --- Game Over ---
         if (lives <= 0 && !gameOver && !isAbandoned) {
-            gameOver = true
-            SoundManager.playSound("gameOver")
-
-// Obtener máximos históricos guardados
-            val prefs = context.getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
-
-// Obtener máximos históricos guardados
-            val maxScoreHist = prefs.getInt("MAX_SCORE_HIST", 0)
-            val maxStreakHist = prefs.getInt("MAX_STREAK_HIST", 0)
-
-            //comparo si son nuevos maximos
-            val isNewHighScore = score > maxScoreHist
-            val isNewHighStreak = maxStreak > maxStreakHist
-
-
-
-
-// Comparar y actualizar explícitamente
-
-            if (score > maxScoreHist) {
-                prefs.edit { putInt("MAX_SCORE_HIST", score) }
-            }
-
-            if (maxStreak > maxStreakHist) {
-                prefs.edit { putInt("MAX_STREAK_HIST", maxStreak) }
-            }
-
-            val intent = android.content.Intent(context, GameOverActivity::class.java)
-            intent.putExtra("SCORE", score)
-            intent.putExtra("MAX_STREAK", maxStreak)  //
-            intent.putExtra("LEVEL", level)
-            intent.putExtra("NEW_HIGH_SCORE", isNewHighScore)
-            intent.putExtra("NEW_HIGH_STREAK", isNewHighStreak)
-            context.startActivity(intent)
-            pauseThread()
+            triggerGameOver()
         }
+
+
 
 
 
@@ -701,24 +647,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         activeFruit?.draw(canvas)
         activeStar?.draw(canvas)
 
-        // --- Grass crossfade ---
-        if (grassTransition && currentGrass != null && nextGrass != null && levelTransition) {
-            val total = 90f
-            val elapsed = (90f - levelTransitionTimer).coerceAtLeast(0f)
-            val progress = (elapsed / total).coerceIn(0f, 1f)
-            val paint = Paint()
-            paint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
-            canvas.drawBitmap(currentGrass!!, -50f, screenHeight - currentGrass!!.height.toFloat() + 30f, paint)
-            paint.alpha = (progress * 255).toInt().coerceIn(0, 255)
-            canvas.drawBitmap(nextGrass!!, -50f, screenHeight - nextGrass!!.height.toFloat() + 30f, paint)
-            if (progress >= 1f) {
-                currentGrass = nextGrass
-                nextGrass = null
-                grassTransition = false
-            }
-        } else {
-            currentGrass?.let { canvas.drawBitmap(it, -50f, screenHeight - it.height.toFloat() + 30f, null) }
-        }
+
 
         // --- HUD ---
         // Antes de hud.draw()
@@ -806,7 +735,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             cats.add(
                 Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
 
-                    if (level != 10){
+                    if (level != 10 && level != 20){
                         SoundManager.playSound("catAngry")
                         streak = 0
                         player?.state = PlayerState.SAD
@@ -878,7 +807,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // 4) si el tamaño exacto no coincide, escalar y reciclar original
         if (decoded.width != reqWidth || decoded.height != reqHeight) {
-            val scaled = Bitmap.createScaledBitmap(decoded, reqWidth, reqHeight, true)
+            val scaled = decoded.scale(reqWidth, reqHeight)
             if (scaled != decoded) {
                 decoded.recycle()
             }
@@ -895,6 +824,38 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         lastCatSpawnTimeMs = System.currentTimeMillis()
     }
 
+    private fun triggerGameOver() {
+        if (gameOver) return
+        gameOver = true
+        SoundManager.playSound("gameOver")
+
+        // Guardar datos de puntaje
+        val prefs = context.getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
+        val isNewHighScore = score > prefs.getInt("MAX_SCORE_HIST", 0)
+        val isNewHighStreak = maxStreak > prefs.getInt("MAX_STREAK_HIST", 0)
+        prefs.edit().apply {
+            if (isNewHighScore) putInt("MAX_SCORE_HIST", score)
+            if (isNewHighStreak) putInt("MAX_STREAK_HIST", maxStreak)
+            apply()
+        }
+
+        // Pausar hilo
+        pauseThread()
+
+        // Lanzar GameOverActivity en UI thread
+        Handler(Looper.getMainLooper()).post {
+            val intent = Intent(context, GameOverActivity::class.java).apply {
+                putExtra("SCORE", score)
+                putExtra("MAX_STREAK", maxStreak)
+                putExtra("LEVEL", level)
+                putExtra("NEW_HIGH_SCORE", isNewHighScore)
+                putExtra("NEW_HIGH_STREAK", isNewHighStreak)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
+
 
     fun abandonGame() {
         if (gameOver) return  // si ya terminó, no hacemos nada
@@ -904,6 +865,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
+
+
+
 
 
 
