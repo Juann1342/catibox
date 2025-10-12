@@ -1,0 +1,116 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".GameCompletedActivity"
+    android:background="#222222">
+
+    <!-- Título motivador -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Has finalizado el juego!"
+        android:textColor="#FFD700"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"/>
+    <!-- Mensaje de felicitaciones -->
+    <TextView
+        android:id="@+id/tvCongrats"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="¡Felicitaciones! Sigue así, nunca dejes de intentarlo."
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="20dp"/>
+
+
+
+    <TextView
+        android:id="@+id/tvScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Score: "
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        app:layout_constraintTop_toBottomOf="@id/tvCongrats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/tvMaxStreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Streak: "
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        app:layout_constraintTop_toBottomOf="@id/tvScore"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/tvHighScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEW HIGH SCORE!"
+        android:textColor="#FFD700"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvMaxStreak"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/tvHighStreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEW HIGH STREAK!"
+        android:textColor="#FFD700"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvHighScore"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/tvMotivation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="¡Veremos si en la próxima partida puedes superarte! Pronto podrás disfrutar de nuevos niveles."
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tvHighStreak"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="20dp"/>
+
+    <Button
+        android:id="@+id/btnRestart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restart"
+        app:layout_constraintTop_toBottomOf="@id/tvMotivation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

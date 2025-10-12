@@ -32,6 +32,8 @@ object SoundManager {
             sounds["bootCrash"] = soundPool!!.load(context, R.raw.boot_crash, 1)
             sounds["fruitCatch"] = soundPool!!.load(context, R.raw.fruit_catch, 1)
             sounds["starCatch"] = soundPool!!.load(context, R.raw.star_catch, 1)
+            sounds["win"] = soundPool!!.load(context, R.raw.gamer_win, 1)
+
 
 
         }

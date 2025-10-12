@@ -42,7 +42,7 @@ class Player(
         // animación de caminar al deslizar
         if (isSliding && walkNormalBitmap != null) {
             walkTimer += deltaTime
-            if (walkTimer >= 0.4f) { // 400 ms
+            if (walkTimer >= 0.3f) { // 300 ms
                 showNormal = !showNormal
                 walkTimer = 0f
             }

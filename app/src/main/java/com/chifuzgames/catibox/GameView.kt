@@ -27,7 +27,6 @@ import com.chifuzgames.catibox.ui.HUD
 import kotlin.random.Random
 import androidx.core.graphics.scale
 import androidx.core.graphics.createBitmap
-import androidx.core.content.edit
 
 class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
@@ -132,7 +131,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Niveles ---
     var level = 1
     private var catsSpawned = 0
-    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26,40,12, 14, 16,18,20,22,24,26,28, Int.MAX_VALUE) // nivel 20 sin límite
+    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26,40,12, 14, 16,18,20,22,24,26,28, 200) // nivel 20 200
     private var levelTransition = false
     private var levelTransitionTimer = 0f
 
@@ -153,6 +152,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var backgroundTransition = false
 
     private val catBitmapCache = mutableMapOf<Int, Bitmap>()
+
+    private var gameCompleted = false
+    private var gameCompletedTimer = 0f
 
 
     // --- Racha (streak) ---
@@ -195,7 +197,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         Pair(2.1f, 29),  // nivel 17
         Pair(2.2f, 28),  // nivel 18
         Pair(2.3f, 27),  // nivel 19
-        Pair(1f, 30),  // nivel 20+ bonus
+        Pair(3f, 10),  // nivel 20+ bonus
 
     )
 
@@ -266,7 +268,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
 
         // load defaults (kept for compatibility)
-        backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.background)
+       // backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.background)
+        backgroundBitmap = decodeSampledBitmapFromResource(R.drawable.background, screenWidth, screenHeight, true)
 
         balloonBitmap = BitmapFactory.decodeResource(resources, R.drawable.hot_air_balloon)
         planeBitmap = BitmapFactory.decodeResource(resources, R.drawable.plane)
@@ -382,8 +385,10 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         val bgId = getDrawableIdByName(bgName)
 
         // prepare nextBackground
-        nextBackground = BitmapFactory.decodeResource(resources, bgId)
-        nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
+       // nextBackground = BitmapFactory.decodeResource(resources, bgId)
+    //    nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
+        nextBackground = decodeSampledBitmapFromResource(bgId, screenWidth, screenHeight, preferRgb565 = true)
+
 
         // enable transitions
         backgroundTransition = true
@@ -392,6 +397,20 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     fun update(deltaTime: Float) {
         if (player == null || gameOver || isPaused) return
 
+
+        // --- Comprobar final del juego ---
+        if (level == 20 && catsSpawned >= 200 && !gameCompleted) {
+            // iniciar contador de 3 segundos
+            gameCompleted = true
+            gameCompletedTimer = 3f * 60f // 3 segundos * 60 fps
+        }
+
+        if (gameCompleted) {
+            gameCompletedTimer -= deltaTime * 60f
+            if (gameCompletedTimer <= 0f) {
+                triggerGameCompleted()
+            }
+        }
         // --- Transición de nivel ---
         if (levelTransition) {
             levelTransitionTimer -= deltaTime * 60
@@ -411,6 +430,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         if (level == 10 || level == 20){
             player?.state = PlayerState.SPACE
+            deleteFlyingObject()
         }else{
             when(player?.state) {
                 PlayerState.HAPPY, PlayerState.SAD, PlayerState.OUCH, PlayerState.DOUBLE_POINTS -> {} // dejar tal cual
@@ -435,7 +455,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         if (score > 0 &&
             score % BALLOON_SCORE_INTERVAL == 0 &&
             score != lastBalloonScore &&
-            balloon == null) {
+            balloon == null && level != 10 && level != 20) {
 
             val fromLeft = Random.nextBoolean()
             val xPos = if (fromLeft) -balloonWidth.toFloat() else screenWidth.toFloat()
@@ -484,7 +504,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // --- Avión + Fruta ---
         val planeWidth = (screenWidth / PLANE_WIDTH_RATIO).toInt()
         val planeHeight = (planeWidth * PLANE_HEIGHT_MULT).toInt()
-        if (score > 0 && score % PLANE_SCORE_INTERVAL == 0 && plane == null) {
+        if (score > 0 && score % PLANE_SCORE_INTERVAL == 0 && plane == null && level != 10 && level != 20) {
 
             if(!planeSpawned){
                 PLANE_SCORE_INTERVAL = PLANE_SCORE_INTERVAL - 20
@@ -532,7 +552,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         // --- OVNI + Estrella ---
         val ufoWidth = (screenWidth / UFO_WIDTH_RATIO).toInt()
         val ufoHeight = (ufoWidth * UFO_HEIGHT_MULT).toInt()
-        if (score > 0 && score % UFO_SCORE_INTERVAL == 0 && ufo == null) {
+        if (score > 0 && score % UFO_SCORE_INTERVAL == 0 && ufo == null && level != 10 && level != 20) {
             if(!ufoSpawned){
                 UFO_SCORE_INTERVAL = UFO_SCORE_INTERVAL - 60
                 ufoSpawned = true
@@ -621,6 +641,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // --- Game Over ---
         if (lives <= 0 && !gameOver && !isAbandoned) {
+           // stopGame()
+
             triggerGameOver()
         }
 
@@ -871,8 +893,17 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private fun triggerGameOver() {
         if (gameOver) return
         gameOver = true
-        SoundManager.playSound("gameOver")
+        thread?.stopCompletely()
 
+        thread?.stopThread(false)
+        thread = null
+        SoundManager.playSound("gameOver")
+        holder.lockCanvas()?.let { canvas ->
+            val paint = Paint()
+            paint.color = Color.argb(200, 0, 0, 0)
+            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+            holder.unlockCanvasAndPost(canvas)
+        }
         // Guardar datos de puntaje
         val prefs = context.getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
         val isNewHighScore = score > prefs.getInt("MAX_SCORE_HIST", 0)
@@ -901,6 +932,58 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
 
+
+
+    private fun triggerGameCompleted() {
+        if (gameOver) return // si ya terminó por vidas, no hacemos nada
+        gameOver = true
+        thread?.stopCompletely()
+        thread = null
+
+        SoundManager.playSound("win")
+
+        // Guardar stats como en gameOver
+        val prefs = context.getSharedPreferences("CATIBOX_PREFS", Context.MODE_PRIVATE)
+        val isNewHighScore = score > prefs.getInt("MAX_SCORE_HIST", 0)
+        val isNewHighStreak = maxStreak > prefs.getInt("MAX_STREAK_HIST", 0)
+        prefs.edit().apply {
+            if (isNewHighScore) putInt("MAX_SCORE_HIST", score)
+            if (isNewHighStreak) putInt("MAX_STREAK_HIST", maxStreak)
+            apply()
+        }
+
+        // Mostrar overlay de felicitaciones
+        pauseThread()
+        Handler(Looper.getMainLooper()).post {
+            val intent = Intent(context, GameCompletedActivity::class.java).apply {
+                putExtra("SCORE", score)
+                putExtra("MAX_STREAK", maxStreak)
+                putExtra("LEVEL", level)
+                putExtra("NEW_HIGH_SCORE", isNewHighScore)
+                putExtra("NEW_HIGH_STREAK", isNewHighStreak)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
+
+    private fun deleteFlyingObject() {
+        // Reinicia el avión, el OVNI y el globo
+        plane = null
+        ufo = null
+        balloon = null
+
+        // También puedes limpiar los items que hayan dejado
+        activeFruit = null
+        activeStar = null
+
+        // Si quieres limpiar todas las botas que estén en vuelo
+        boots.clear()
+    }
+
+
+
+
     fun abandonGame() {
         if (gameOver) return  // si ya terminó, no hacemos nada
         isAbandoned = true
@@ -909,10 +992,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
-
-
-
-
 
 
 

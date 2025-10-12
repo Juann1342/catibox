@@ -14,6 +14,16 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
         running = isRunning
     }
 
+
+    // 🧨 Nuevo método: detiene el juego por completo (Game Over)
+    fun stopCompletely() {
+        running = false
+        // Forzamos interrupción del hilo por si está dormido en sleep()
+        try {
+            interrupt()
+        } catch (_: Exception) {}
+    }
+
     override fun run() {
         var canvas: Canvas?
         var lastTime = System.nanoTime()
@@ -25,8 +35,11 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
 
             canvas = null
             try {
-                // <-- chequeo de validez
-                if (!surfaceHolder.surface.isValid) continue
+                // Si la Surface no es válida, salimos del loop
+                if (!surfaceHolder.surface.isValid) {
+                    running = false
+                    break
+                }
 
                 canvas = surfaceHolder.lockCanvas()
                 synchronized(surfaceHolder) {
@@ -35,6 +48,9 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                // Si hay excepción al dibujar, salimos del loop para evitar crashes
+                running = false
+                break
             } finally {
                 if (canvas != null) {
                     try {
@@ -45,9 +61,16 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
 
             val timeMillis = (System.nanoTime() - startTime) / 1_000_000
             val waitTime = targetTime - timeMillis
-            if (waitTime > 0) sleep(waitTime)
+            if (waitTime > 0) {
+                try {
+                    sleep(waitTime)
+                } catch (_: InterruptedException) {
+                    break
+                }
+            }
         }
     }
+
 
 
 }
