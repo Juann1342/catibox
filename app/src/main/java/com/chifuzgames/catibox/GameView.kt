@@ -111,7 +111,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
     var score = 0
     var lives = 5
-    private var difficultyMultiplier = 2f
+    private var difficultyMultiplier = 2.5f
 
     // Música de fondo
 
