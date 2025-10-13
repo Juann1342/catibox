@@ -1,15 +1,12 @@
 package com.chifuzgames.catibox
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import android.content.pm.ActivityInfo
 import com.chifuzgames.catibox.managers.SoundManager
-import androidx.core.content.edit
 
 
 class GameActivity : AppCompatActivity() {
@@ -26,13 +23,14 @@ class GameActivity : AppCompatActivity() {
 
         val initialLives = intent.getIntExtra("INITIAL_LIVES", 5)
         val initialScore = intent.getIntExtra("INITIAL_SCORE", 0)
-        val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 1)
+        val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 9)
+
 
         // Creamos GameView
         gameView = GameView(this)
 
         // Configuramos música de fondo
-        backgroundMusic = MediaPlayer.create(this, R.raw.background_music)
+        backgroundMusic = MediaPlayer.create(this, R.raw.background_music_normal)
         backgroundMusic.isLooping = true
         backgroundMusic.start()
 

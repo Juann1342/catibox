@@ -3,14 +3,21 @@ package com.chifuzgames.catibox.entities
 import android.graphics.Bitmap
 import android.graphics.Canvas
 
+enum class CatState {
+    NORMAL, SPACE
+}
+
 class Cat(
     var x: Float,
     var y: Float,
     val width: Int,
     val height: Int,
-    val bitmap: Bitmap,
+    val normalBitmap: Bitmap,
+    val spaceBitmap: Bitmap,
     val onHitGround: () -> Unit
 ) {
+    var state: CatState = CatState.NORMAL
+
     private var baseFallSpeed = (200..400).random().toFloat() // píxeles por segundo
     private var sliding = false
     private var slideDirection = 0f
@@ -54,8 +61,13 @@ class Cat(
     }
 
     fun draw(canvas: Canvas) {
-        canvas.drawBitmap(bitmap, x, y, null)
+        val bmpToDraw = when (state) {
+            CatState.SPACE -> spaceBitmap
+            else -> normalBitmap
+        }
+        canvas.drawBitmap(bmpToDraw, x, y, null)
     }
+
 
     fun isCaught(player: Player, previousY: Float): Boolean {
         if (!canBeCaught) return false

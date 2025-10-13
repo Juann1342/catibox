@@ -27,6 +27,7 @@ import com.chifuzgames.catibox.ui.HUD
 import kotlin.random.Random
 import androidx.core.graphics.scale
 import androidx.core.graphics.createBitmap
+import com.chifuzgames.catibox.entities.CatState
 
 class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
@@ -48,10 +49,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private lateinit var hud: HUD
     private lateinit var backgroundPlayer: MediaPlayer
 
-
     // Bitmaps
-
-
 
     private lateinit var playerBitmap: Bitmap
 
@@ -74,6 +72,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private lateinit var playerSpaceWalkBitmap: Bitmap
 
     private lateinit var catBitmap: Bitmap
+
+    private lateinit var catSpaceBitmap: Bitmap
 
     private lateinit var backgroundBitmap: Bitmap
 
@@ -122,7 +122,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // Mute button
     private val muteButtonSize = 100f
 
-
     // --- Variables globales de GameView ---
     private var doublePointsActive = false
     private var doublePointsTimer = 0f // en frames
@@ -152,10 +151,26 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var backgroundTransition = false
 
     private val catBitmapCache = mutableMapOf<Int, Bitmap>()
+    private val catSpaceBitmapCache = mutableMapOf<Int, Bitmap>()
+
+    private var transitionFramesOut = mutableListOf<Bitmap>()
+    private var transitionFramesIn = mutableListOf<Bitmap>()
+    private var currentTransitionFrame = 0
+    private var isTransitionPlaying = false
+    private var isTransitionOut = true
+    private var transitionTimer = 0f
+    private val baseTransitionFrameDuration = 0.08f * 60f // base: 0.08s * 60fps ≈ 5 frames
+    private var transitionSpeedMultiplier = 6f          // 1.0 = normal, >1 = más lento, <1 = más rápido
+    private var transitionFrameDuration = baseTransitionFrameDuration * transitionSpeedMultiplier
+
+    private enum class TransitionMode { NONE, OUT_ONLY, IN }
+    private var currentTransitionMode = TransitionMode.NONE
+    private var transitionTargetLevel = -1
+    private val completedOutTransitions = mutableSetOf<Int>() // niveles que ya mostraron OUT
+    private val completedInTransitions = mutableSetOf<Int>()  // niveles que ya mostraron IN
 
     private var gameCompleted = false
     private var gameCompletedTimer = 0f
-
 
     // --- Racha (streak) ---
     private var streak = 0
@@ -171,11 +186,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     private var initialStreak = 0     // ← racha inicial configurable
 
 
-
     //dificultad por gato
     private var difficultyIncreasePerCat = 0.05f
     //cada cuantos gatos aumenta
-
 
     private val levelDifficulty = listOf(
         Pair(0.6f, 110), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
@@ -207,8 +220,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         SoundManager.init(context)
         initIcons()
     }
-
-
 
     private fun initIcons() {
         muteIcon = drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_mute)!!, muteButtonSize.toInt(), muteButtonSize.toInt())
@@ -249,6 +260,14 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             toggleMute()              // activar/desactivar sonido
         }
 
+        for (i in 1..7) {
+            val resId = getDrawableIdByName("bg_transition_out$i")
+            transitionFramesOut.add(decodeSampledBitmapFromResource(resId, screenWidth, screenHeight))
+        }
+        for (i in 1..4) {
+            val resId = getDrawableIdByName("bg_transition_in$i")
+            transitionFramesIn.add(decodeSampledBitmapFromResource(resId, screenWidth, screenHeight))
+        }
 
         val playerWidth = (screenWidth / PLAYER_WIDTH_RATIO).toInt()
         val playerHeight = (playerWidth * PLAYER_HEIGHT_MULT).toInt()
@@ -265,10 +284,10 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         playerSpaceBitmap = decodeSampledBitmapFromResource(R.drawable.player_space,playerWidth,playerHeight)
         playerSpaceWalkBitmap = decodeSampledBitmapFromResource(R.drawable.player_space_walk,playerWidth,playerHeight)
         catBitmap = decodeSampledBitmapFromResource(R.drawable.cat, (screenWidth / CAT_BASE_RATIO).toInt(), (screenWidth / CAT_BASE_RATIO).toInt())
+        catSpaceBitmap = decodeSampledBitmapFromResource(R.drawable.cat_space, (screenWidth / CAT_BASE_RATIO).toInt(), (screenWidth / CAT_BASE_RATIO).toInt())
 
 
         // load defaults (kept for compatibility)
-       // backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.background)
         backgroundBitmap = decodeSampledBitmapFromResource(R.drawable.background, screenWidth, screenHeight, true)
 
         balloonBitmap = BitmapFactory.decodeResource(resources, R.drawable.hot_air_balloon)
@@ -313,8 +332,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         catSpawnIntervalMs = (levelDifficulty[0].second / 60f * 1000).toLong()
 
 
-       // currentBackground = decodeSampledBitmapFromResource(getDrawableIdByName(backgroundNames[0]), screenWidth, screenHeight, preferRgb565 = false)
-// preferRgb565 = false si querés conservar alfa o mejor color en el fondo
+// preferRgb565 = false para conservar alfa o mejor color en el fondo
 // Ajustar dificultad y parámetros al nivel inicial
         val idx = (initialLevel - 1).coerceIn(0, levelDifficulty.size - 1)
         difficultyMultiplier = levelDifficulty[idx].first
@@ -325,7 +343,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             getDrawableIdByName(backgroundNames.getOrElse(idx) { backgroundNames.last() }),
             screenWidth, screenHeight, preferRgb565 = false
         )
-
 
         thread = GameThread(holder, this)
         thread?.stopThread(true)
@@ -340,13 +357,19 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             bmp
         }
     }
+    private fun getCatSpaceBitmapForWidth(width: Int): Bitmap {
+        return catSpaceBitmapCache[width] ?: run {
+            val bmp = catSpaceBitmap.scale(width, width, false)
+            catSpaceBitmapCache[width] = bmp
+            bmp
+        }
+    }
 
     @SuppressLint("DiscouragedApi")
     private fun getDrawableIdByName(name: String): Int {
         val id = resources.getIdentifier(name, "drawable", context.packageName)
         return if (id != 0) id else R.drawable.background // fallback to background if not found
     }
-
 
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
@@ -373,30 +396,87 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
 
         // 3. Limpiar caches
         catBitmapCache.values.forEach { it.recycle() }
+        catSpaceBitmapCache.values.forEach { it.recycle() }
+
         catBitmapCache.clear()
+        catSpaceBitmapCache.clear()
+
     }
 
-
-
-
     private fun loadLevelAssets(nextLevel: Int) {
+        if (isTransitionPlaying) return  // <-- no hacer nada mientras transiciona
+
         val bgName = backgroundNames.getOrNull(nextLevel - 1) ?: backgroundNames.last()
 
         val bgId = getDrawableIdByName(bgName)
 
-        // prepare nextBackground
-       // nextBackground = BitmapFactory.decodeResource(resources, bgId)
-    //    nextBackground = nextBackground!!.scale(screenWidth, screenHeight, false)
         nextBackground = decodeSampledBitmapFromResource(bgId, screenWidth, screenHeight, preferRgb565 = true)
-
-
         // enable transitions
         backgroundTransition = true
     }
 
     fun update(deltaTime: Float) {
         if (player == null || gameOver || isPaused) return
+        
+        if (isTransitionPlaying) {
+            backgroundPlayer.setVolume(0.4f, 0.4f)
 
+            transitionTimer -= deltaTime * 60f
+            if (transitionTimer <= 0f) {
+                transitionTimer = transitionFrameDuration
+                currentTransitionFrame++
+                val maxFrames = if (isTransitionOut) transitionFramesOut.size else transitionFramesIn.size
+
+                if (currentTransitionFrame >= maxFrames) {
+                    when (currentTransitionMode) {
+                        TransitionMode.OUT_ONLY -> {
+                            // OUT terminó: lo marcamos como completado y detenemos la animación.
+                            completedOutTransitions.add(transitionTargetLevel)
+
+                            // CARGAR nextBackground para el siguiente nivel (por ejemplo 10 -> 11).
+                            // Usamos transitionTargetLevel + 1 como el level siguiente que deberá mostrarse en IN.
+                            val nextLevel = transitionTargetLevel
+                            if (nextBackground == null && nextLevel <= backgroundNames.size) {
+                                val bgName = backgroundNames.getOrNull(nextLevel - 1) ?: backgroundNames.last()
+                                val bgId = getDrawableIdByName(bgName)
+                                // decodificamos el bitmap preparado (preferRgb565 = true para gastar menos memoria si está ok)
+                                nextBackground = decodeSampledBitmapFromResource(bgId, screenWidth, screenHeight, preferRgb565 = true)
+                                // indicamos que hay fondo preparado para la crossfade IN más adelante
+                                backgroundTransition = true
+                            }
+
+                            isTransitionPlaying = false
+                            // no auto-switch a IN
+                            currentTransitionMode = TransitionMode.NONE
+                            // Si querés, podrías forzar que el player quede en estado SPACE u otra cosa
+                        }
+
+                        TransitionMode.IN -> {
+                            // IN terminó: aplicamos el nextBackground y marcamos completado
+                            completedInTransitions.add(transitionTargetLevel)
+                            isTransitionPlaying = false
+                            currentTransitionMode = TransitionMode.NONE
+                            levelTransition = false
+                            catsSpawned = 0
+                            currentBackground?.recycle()
+                            currentBackground = nextBackground
+                            nextBackground = null
+                            backgroundTransition = false
+                        }
+                        else -> {
+                            isTransitionPlaying = false
+                            currentTransitionMode = TransitionMode.NONE
+                        }
+                    }
+                }
+            }
+            return // mientras se anima la transición, no actualizar nada más
+        }else{
+            if (::backgroundPlayer.isInitialized) {
+                if (SoundManager.isMuted) backgroundPlayer.setVolume(0f, 0f)
+                else backgroundPlayer.setVolume(1f, 1f)
+            }
+        }
 
         // --- Comprobar final del juego ---
         if (level == 20 && catsSpawned >= 200 && !gameCompleted) {
@@ -413,7 +493,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
         // --- Transición de nivel ---
         if (levelTransition) {
-            levelTransitionTimer -= deltaTime * 60
+            levelTransitionTimer -= deltaTime * 120
             if (levelTransitionTimer <= 0) {
                 levelTransition = false
                 catsSpawned = 0
@@ -647,28 +727,60 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
 
 
-
-
-
         // --- Nivel ---
         if (catsSpawned >= catsPerLevel[level - 1] && cats.isEmpty() && level < catsPerLevel.size) {
-            level++
-            loadLevelAssets(level)
-            levelTransition = true
-            levelTransitionTimer = 1.5f * 60f
-            if (level < levelDifficulty.size) {
-                difficultyMultiplier = levelDifficulty[level - 1].first
-                catSpawnIntervalMs = (levelDifficulty[level - 1].second / 60f * 1000).toLong()
+            val newLevel = level + 1
+
+            // caso 9 -> 10 o 19 -> 20: queremos mostrar solo OUT (no cargar bg entrada todavía)
+            if ((newLevel == 10 || newLevel == 20) && !completedOutTransitions.contains(newLevel)) {
+                level = newLevel
+                // no llamar loadLevelAssets todavía (evitamos cargar fondo siguiente)
+                levelTransition = true
+                levelTransitionTimer = 1.5f * 60f
+                applyLevelSettings(level)
+                startTransition(TransitionMode.OUT_ONLY, level)
+                // marcamos catsSpawned para el nuevo nivel
+                catsSpawned = 0
             }
-            applyLevelSettings(level)
-
+            // caso 10 -> 11 (mostrar IN): cargamos nextBackground y mostramos IN
+            else if (level == 10 && newLevel == 11 && !completedInTransitions.contains(newLevel)) {
+                level = newLevel
+                // aplicamos settings (pero no sobreescribimos el fondo hasta que termine IN)
+                levelTransition = true
+                levelTransitionTimer = 1.5f * 60f
+                applyLevelSettings(level)
+                // start IN (esto cargará nextBackground dentro de startTransition)
+                startTransition(TransitionMode.IN, level)
+                catsSpawned = 0
+            }
+            // caso general
+            else {
+                level = newLevel
+                // carga normal del fondo y transición cruzada
+                loadLevelAssets(level)
+                levelTransition = true
+                levelTransitionTimer = 1.5f * 60f
+                if (level < levelDifficulty.size) {
+                    difficultyMultiplier = levelDifficulty[level - 1].first
+                    catSpawnIntervalMs = (levelDifficulty[level - 1].second / 60f * 1000).toLong()
+                }
+                applyLevelSettings(level)
+                catsSpawned = 0
+            }
         }
-    }
 
+    }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         if (player == null) return
+
+        // --- Dibujar transición entre niveles ---
+        if (isTransitionPlaying) {
+            val frame = if (isTransitionOut) transitionFramesOut.getOrNull(currentTransitionFrame) else transitionFramesIn.getOrNull(currentTransitionFrame)
+            frame?.let { canvas.drawBitmap(it, 0f, 0f, null) }
+            return
+        }
 
         // --- Background crossfade (nivel) ---
         if (backgroundTransition && currentBackground != null && nextBackground != null && levelTransition) {
@@ -707,8 +819,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         activeFruit?.draw(canvas)
         activeStar?.draw(canvas)
 
-
-
         // --- HUD ---
         // Antes de hud.draw()
         hud.score = score
@@ -718,9 +828,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         hud.level = level
         hud.levelTransition = levelTransition
         hud.levelTransitionTimer = levelTransitionTimer
-
         hud.draw(canvas, width)
-
 
 
         // --- Overlay Game Over ---
@@ -728,8 +836,9 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val overlay = Paint().apply { color = Color.argb(180, 0, 0, 0) }
             canvas.drawRect(0f, 0f, screenWidth.toFloat(), screenHeight.toFloat(), overlay)
         }
-    }
 
+
+    }
 
     @SuppressLint("ClickableViewAccessibility")
 
@@ -769,7 +878,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
 
-
     fun setBackgroundPlayer(player: MediaPlayer) {
         backgroundPlayer = player
         if (SoundManager.isMuted) backgroundPlayer.setVolume(0f, 0f)
@@ -795,21 +903,32 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             val xPos = (0..(screenWidth - catWidth)).random().toFloat()
             val startY = -catHeight.toFloat()
 
-            // crear cat y velocidad en píxeles/segundo
+            // Escalamos ambos bitmaps
             val catBitmapScaled = getCatBitmapForWidth(catWidth)
+            val catSpaceBitmapScaled = getCatSpaceBitmapForWidth(catWidth)
 
-            cats.add(
-                Cat(xPos, startY, catWidth, catHeight, catBitmapScaled) {
-
-                    if (level != 10 && level != 20){
-                        SoundManager.playSound("catAngry")
-                        streak = 0
-                        player?.state = PlayerState.SAD
-                        lives--
-                        player?.stateTimer = 1.0f // 1 segundo
-                    }
+            // Creamos el gato
+            val cat = Cat(
+                xPos, startY, catWidth, catHeight,
+                catBitmapScaled,
+                catSpaceBitmapScaled
+            ) {
+                // callback al tocar el suelo
+                if (level != 10 && level != 20) {
+                    SoundManager.playSound("catAngry")
+                    streak = 0
+                    player?.state = PlayerState.SAD
+                    lives--
+                    player?.stateTimer = 1.0f // 1 segundo
                 }
-            )
+            }
+
+            // Si es nivel 10 o 20, activar el estado SPACE
+            if (level == 10 || level == 20) {
+                cat.state = CatState.SPACE
+            }
+
+            cats.add(cat)
             return true
         }
         return false
@@ -825,7 +944,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
             else backgroundPlayer.setVolume(1f, 1f)
         }
     }
-
 
     fun pauseThread() { thread?.stopThread(false) }
 
@@ -888,8 +1006,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         difficultyMultiplier = levelDifficulty[idx].first
         catSpawnIntervalMs = (levelDifficulty[idx].second / 60f * 1000).toLong()
         lastCatSpawnTimeMs = System.currentTimeMillis()
-    }
 
+    }
     private fun triggerGameOver() {
         if (gameOver) return
         gameOver = true
@@ -931,8 +1049,28 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         }
     }
 
+    private fun startTransition(mode: TransitionMode, targetLevel: Int) {
+        // si ya ejecutamos este tipo para ese nivel, no volvemos a hacerlo
+        if (mode == TransitionMode.OUT_ONLY && completedOutTransitions.contains(targetLevel)) return
+        if (mode == TransitionMode.IN && completedInTransitions.contains(targetLevel)) return
 
+        currentTransitionMode = mode
+        transitionTargetLevel = targetLevel
+        isTransitionPlaying = true
+        isTransitionOut = (mode == TransitionMode.OUT_ONLY)
+        currentTransitionFrame = 0
+        transitionTimer = transitionFrameDuration
+        deleteFlyingObject()
 
+        // Si es IN, asegurarnos de cargar el nextBackground antes de mostrar IN
+        if (mode == TransitionMode.IN) {
+            // carga assets para targetLevel (ahora sí preparamos el fondo entrante)
+            val bgName = backgroundNames.getOrNull(targetLevel - 1) ?: backgroundNames.last()
+            val bgId = getDrawableIdByName(bgName)
+            nextBackground = decodeSampledBitmapFromResource(bgId, screenWidth, screenHeight, preferRgb565 = true)
+            backgroundTransition = true
+        }
+    }
 
     private fun triggerGameCompleted() {
         if (gameOver) return // si ya terminó por vidas, no hacemos nada
@@ -982,8 +1120,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     }
 
 
-
-
     fun abandonGame() {
         if (gameOver) return  // si ya terminó, no hacemos nada
         isAbandoned = true
@@ -993,6 +1129,8 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         context.startActivity(intent)
     }
 
-
-
 }
+
+
+
+

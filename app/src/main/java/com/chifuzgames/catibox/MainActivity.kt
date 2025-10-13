@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // inicializamos la música primero (archivo en res/raw/background_music.wav o .m4a)
-        mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music_normal)
         mediaPlayer.isLooping = true
         mediaPlayer.setVolume(1f, 1f)
         mediaPlayer.start()
