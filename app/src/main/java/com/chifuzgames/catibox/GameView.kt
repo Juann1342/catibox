@@ -35,7 +35,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         const val PLAYER_WIDTH_RATIO = 4f
         const val PLAYER_HEIGHT_MULT = 1.8f
         const val CAT_BASE_RATIO = 7f
-        const val BALLOON_WIDTH_RATIO = 4f
+        const val BALLOON_WIDTH_RATIO = 3.5f
         const val BALLOON_HEIGHT_MULT = 1.65f
         const val PLANE_WIDTH_RATIO = 3.5f
         const val PLANE_HEIGHT_MULT = 0.55f
@@ -210,7 +210,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         Pair(2.1f, 29),  // nivel 17
         Pair(2.2f, 28),  // nivel 18
         Pair(2.3f, 27),  // nivel 19
-        Pair(3f, 10),  // nivel 20+ bonus
+        Pair(2.8f, 15),  // nivel 20+ bonus
 
     )
 

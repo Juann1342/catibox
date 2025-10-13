@@ -15,8 +15,11 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 object AdManager {
 
     private const val BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
-    private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
-    private const val REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
+   private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
+ //private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/0000000"
+   private const val REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
+ // private const val REWARDED_ID = "ca-app-pub-3940256099942544/000000"
+
 
     private var bannerView: AdView? = null
 
@@ -55,7 +58,11 @@ object AdManager {
     }
 
     /** Mostrar interstitial de manera segura y asíncrona */
-    fun showInterstitial(activity: Activity, onAdClosed: () -> Unit) {
+    fun showInterstitial(
+        activity: Activity,
+        onAdClosed: () -> Unit,
+        onAdUnavailable: (() -> Unit)? = null
+    ) {
         try {
             InterstitialAd.load(activity, INTERSTITIAL_ID, AdRequest.Builder().build(),
                 object : InterstitialAdLoadCallback() {
@@ -64,24 +71,23 @@ object AdManager {
                             override fun onAdDismissedFullScreenContent() { onAdClosed() }
                             override fun onAdFailedToShowFullScreenContent(adError: AdError) { onAdClosed() }
                         }
-                        try {
-                            ad.show(activity)
-                        } catch (_: Exception) {
-                            onAdClosed()
-                        }
+                        try { ad.show(activity) } catch (_: Exception) { onAdClosed() }
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        onAdClosed()
+                        onAdUnavailable?.invoke()
                     }
                 })
         } catch (_: Exception) {
-            onAdClosed()
+            onAdUnavailable?.invoke()
         }
     }
 
-    /** Mostrar rewarded de manera segura y asíncrona */
-    fun showRewarded(activity: Activity, onRewardEarned: () -> Unit) {
+    fun showRewarded(
+        activity: Activity,
+        onRewardEarned: () -> Unit,
+        onAdUnavailable: (() -> Unit)? = null
+    ) {
         try {
             RewardedAd.load(activity, REWARDED_ID, AdRequest.Builder().build(),
                 object : RewardedAdLoadCallback() {
@@ -90,15 +96,16 @@ object AdManager {
                             override fun onAdDismissedFullScreenContent() { /* nada */ }
                             override fun onAdFailedToShowFullScreenContent(adError: AdError) { /* nada */ }
                         }
-                        try {
-                            ad.show(activity) { _: RewardItem -> onRewardEarned() }
-                        } catch (_: Exception) {}
+                        try { ad.show(activity) { _: RewardItem -> onRewardEarned() } } catch (_: Exception) {}
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {
-                        // silencioso, no mostrar toast
+                        onAdUnavailable?.invoke()
                     }
                 })
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+            onAdUnavailable?.invoke()
+        }
     }
+
 }

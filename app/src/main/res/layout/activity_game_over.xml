@@ -110,6 +110,13 @@
                 android:textColor="#FFFFFF"
                 android:layout_marginBottom="16dp" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
             <!-- Botones dentro del scroll -->
             <Button
                 android:id="@+id/playAgainButton"
