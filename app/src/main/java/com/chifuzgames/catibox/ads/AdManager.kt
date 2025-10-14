@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.chifuzgames.catibox.BuildConfig
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -14,11 +15,9 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
 object AdManager {
 
-    private const val BANNER_ID = "ca-app-pub-3940256099942544/6300978111"
-   private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712"
- //private const val INTERSTITIAL_ID = "ca-app-pub-3940256099942544/0000000"
-   private const val REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
- // private const val REWARDED_ID = "ca-app-pub-3940256099942544/000000"
+    private val BANNER_ID = BuildConfig.BANNER_ID
+    private val INTERSTITIAL_ID = BuildConfig.INTERSTITIAL_ID
+    private val REWARDED_ID = BuildConfig.REWARDED_ID
 
 
     private var bannerView: AdView? = null

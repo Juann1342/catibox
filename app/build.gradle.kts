@@ -1,3 +1,12 @@
+import java.util.Properties
+
+// --- Cargar local.properties desde la raíz del proyecto ---
+val localProperties = Properties()
+val localFile = rootProject.file("local.properties")
+if (localFile.exists()) {
+    localFile.inputStream().use { localProperties.load(it) }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +15,11 @@ plugins {
 android {
     namespace = "com.chifuzgames.catibox"
     compileSdk = 36
+
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
 
     defaultConfig {
         minSdk = 23
@@ -21,12 +35,36 @@ android {
             applicationId = "com.chifuzgames.catibox.dev"
             versionCode = 1
             versionName = "1.0-dev"
+
+            // IDs desde local.properties (modo pruebas)
+            val bannerId = localProperties.getProperty("BANNER_ID", "")
+            val admobAppId = localProperties.getProperty("ADMOB_APP_ID", "")
+            val interstitialId = localProperties.getProperty("INTERSTITIAL_ID", "")
+            val rewardedId = localProperties.getProperty("REWARDED_ID", "")
+
+            // Exportar a recursos y BuildConfig
+            resValue("string", "admob_app_id", admobAppId)
+            buildConfigField("String", "BANNER_ID", "\"$bannerId\"")
+            buildConfigField("String", "INTERSTITIAL_ID", "\"$interstitialId\"")
+            buildConfigField("String", "REWARDED_ID", "\"$rewardedId\"")
         }
+
         create("prod") {
             dimension = "environment"
             applicationId = "com.chifuzgames.catibox"
             versionCode = 12
             versionName = "1.2"
+
+            // IDs desde local.properties (modo producción)
+            val bannerId = localProperties.getProperty("BANNER_ID_PROD", "")
+            val admobAppId = localProperties.getProperty("ADMOB_APP_ID_PROD", "")
+            val interstitialId = localProperties.getProperty("INTERSTITIAL_ID_PROD", "")
+            val rewardedId = localProperties.getProperty("REWARDED_ID_PROD", "")
+
+            resValue("string", "admob_app_id", admobAppId)
+            buildConfigField("String", "BANNER_ID", "\"$bannerId\"")
+            buildConfigField("String", "INTERSTITIAL_ID", "\"$interstitialId\"")
+            buildConfigField("String", "REWARDED_ID", "\"$rewardedId\"")
         }
     }
 
@@ -39,7 +77,7 @@ android {
             )
         }
         debug {
-            // Opcional: para modificar algo solo en debug
+            versionNameSuffix = "-dev"
         }
     }
 
@@ -47,6 +85,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
