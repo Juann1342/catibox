@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.chifuzgames.catibox.ads.AdManager
+import com.chifuzgames.catibox.managers.PhraseManager
 
 class GameOverActivity : AppCompatActivity() {
 
@@ -19,6 +20,10 @@ class GameOverActivity : AppCompatActivity() {
     private lateinit var reviveNextButton: Button
     private lateinit var playAgainButton: Button
     private lateinit var progressBar: ProgressBar
+
+    private lateinit var tvPhraseGameOver: TextView
+
+    val phraseManager = PhraseManager(this)
 
     private var score = 0
     private var maxStreak = 0
@@ -35,6 +40,8 @@ class GameOverActivity : AppCompatActivity() {
         playAgainButton = findViewById(R.id.playAgainButton)
         progressBar = findViewById(R.id.progressBar) // Agregar en tu layout
         progressBar.visibility = View.GONE
+        tvPhraseGameOver = findViewById(R.id.tvPhraseGameOver)
+
 
         // Inicialmente deshabilitados
         reviveCurrentButton.isEnabled = false
@@ -49,11 +56,13 @@ class GameOverActivity : AppCompatActivity() {
         val highScore = prefs.getInt("MAX_SCORE_HIST", 0)
         val highStreak = prefs.getInt("MAX_STREAK_HIST", 0)
 
-        findViewById<TextView>(R.id.levelTextView).text = getString(R.string.score_text, level)
+        findViewById<TextView>(R.id.levelTextView).text = getString(R.string.level_text, level)
         findViewById<TextView>(R.id.scoreTextView).text = getString(R.string.score_text, score)
         findViewById<TextView>(R.id.streakTextView).text = getString(R.string.max_streak_text, maxStreak)
         findViewById<TextView>(R.id.highScoreTextView).text = getString(R.string.high_score_text, highScore)
         findViewById<TextView>(R.id.highStreakTextView).text = getString(R.string.high_streak_text, highStreak)
+
+        updatePhrase()
 
         val extraMessageScore = findViewById<TextView>(R.id.extraMessageScoreTextView)
         val extraMessageStreak = findViewById<TextView>(R.id.extraMessageStreakTextView)
@@ -118,9 +127,9 @@ class GameOverActivity : AppCompatActivity() {
                 initialLives = 10
 
                 AlertDialog.Builder(this)
-                    .setTitle("Último nivel")
-                    .setMessage("Has llegado al último nivel de este mundo! Disfruta 10 vidas extra como recompensa.")
-                    .setPositiveButton("OK") { _, _ ->
+                    .setTitle(getString(R.string.last_level_dialog_title))
+                    .setMessage(getString(R.string.last_level_dialog_msj))
+                    .setPositiveButton(getString(R.string.last_level_dialog_ok)) { _, _ ->
                         AdManager.showRewarded(this,
                             onRewardEarned = { startNextLevel(nextLevel, initialLives) },
                             onAdUnavailable = {
@@ -156,9 +165,9 @@ class GameOverActivity : AppCompatActivity() {
     }
     private fun showAdUnavailableDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Anuncio no disponible")
-            .setMessage("No hay anuncios disponibles en este momento. Por favor, intenta más tarde.")
-            .setPositiveButton("OK", null)
+            .setTitle(getString(R.string.no_ads_available_dialog_title))
+            .setMessage(getString(R.string.no_ads_available_dialog_msj))
+            .setPositiveButton(getString(R.string.no_ads_available_dialog_ok), null)
             .show()
     }
 
@@ -190,4 +199,8 @@ class GameOverActivity : AppCompatActivity() {
         super.onDestroy()
         AdManager.destroyBanner()
     }
+    private fun updatePhrase(){
+        tvPhraseGameOver.text = phraseManager.getGameOverPhrase()
+    }
+
 }

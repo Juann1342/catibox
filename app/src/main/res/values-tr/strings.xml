@@ -23,4 +23,107 @@
     <string name="paused_text">DURAKLATILDI</string>
     <string name="your_high_score_k">🚀 Senin rekorun: %d</string>
     <string name="your_longest_streak_k">🔥 Senin en uzun serin: %d</string>
+
+    <string name="last_level_dialog_title">Son Seviye</string>
+    <string name="last_level_dialog_msj">Bu dünyanın son seviyesine ulaştınız! Ödül olarak 10 ekstra can kazandınız.</string>
+    <string name="last_level_dialog_ok">Tamam</string>
+
+    <string name="no_ads_available_dialog_title">Reklam mevcut değil</string>
+    <string name="no_ads_available_dialog_msj">Şu anda kullanılabilir reklam yok. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="no_ads_available_dialog_ok">Tamam</string>
+
+    <string name="level_text_game_over">Ulaşılan Seviye: %d</string>
+    <string name="level_game_over">Ulaşılan Seviye: 0</string>
+
+    <string name="privacy_settings">Gizlilik Ayarları</string>
+    <string name="privacy_settings_cancel">İptal</string>
+    <string name="privacy_settings_menu">Menü</string>
+    <string name="privacy_settings_privacy">Gizlilik</string>
+    <string name="privacy_settings_no_apply">Bu seçenek yalnızca ABD ve Avrupa kullanıcıları için geçerlidir. Bölgenizde gizliliğiniz zaten otomatik olarak korunmaktadır.</string>
+    <string name="privacy_settings_no_ok">Tamam</string>
+
+    <string name="try_current_level">Bu seviyede devam et (1 can)</string>
+    <string name="try_next_level">Sonraki seviyeye geç (3 can)</string>
+    <string name="game_finish">Oyunu tamamladınız!</string>
+
+    <string-array name="phrase_finish_win">
+        <item>Muhteşem! Oyunu tamamladınız ve yeteneğinizi gösterdiniz.</item>
+        <item>Tebrikler! Tüm çabalarınız karşılığını aldı.</item>
+        <item>Başardınız! Azminiz sizi buraya getirdi.</item>
+        <item>Mükemmel iş! Bu başarı tamamen sizin.</item>
+        <item>Etkinlik! Oyunu başarıyla tamamladınız.</item>
+        <item>Harika! Her adım sizi zafere yaklaştırdı.</item>
+        <item>Çok iyi! Tüm zorlukları aştınız.</item>
+        <item>Bunu başardınız! Sürekliliğiniz ve özveriniz meyvesini verdi.</item>
+        <item>Zafer! Bu başarıyı kutlayın, hak ettiniz.</item>
+        <item>Tebrikler! Oyunu büyük bir başarıyla tamamladınız.</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>Vazgeçmeyin, doğru yoldasınız!</item>
+        <item>Her deneme sizi başarıya bir adım daha yaklaştırır.</item>
+        <item>Büyük başarılar küçük adımlarla başlar.</item>
+        <item>Hadi! Bir dahaki sefer başaracaksınız.</item>
+        <item>Kaybetmek de öğrenmenin bir parçasıdır.</item>
+        <item>Bir kez daha denemeden hiçbir şey kazanılmaz.</item>
+        <item>Derin bir nefes alın ve tekrar deneyin.</item>
+        <item>En iyiler bile başarılı olmadan önce başarısız oldu.</item>
+        <item>Bu son değil, yeni bir fırsat.</item>
+        <item>Her oyunda daha da gelişiyorsunuz!</item>
+        <item>Kediler her zaman ayakları üzerinde düşer, siz de başarabilirsiniz!</item>
+        <item>Mükemmel çaba! Böyle devam edin.</item>
+        <item>Bir tökezleme, kesin bir düşüş değildir.</item>
+        <item>Tekrar deneyin, üstesinden gelebilirsiniz!</item>
+        <item>Öğrenmek, tekrar denemektir.</item>
+        <item>Her yenilgi değerli bir ders bırakır.</item>
+        <item>Düşündüğünüzden daha yakınsınız!</item>
+        <item>Şimdi vazgeçmeyin, bir sonraki sizin olacak.</item>
+        <item>Pratik ustalık getirir.</item>
+        <item>Bir tane daha ve başaracaksınız!</item>
+        <item>İlerleme zaferden daha önemlidir.</item>
+        <item>Çabanız gözle görülür, devam edin!</item>
+        <item>Düşmek normaldir, önemli olan kalkmaktır.</item>
+        <item>Başarısız olduğunuzda bile eğlenmeyi unutmayın!</item>
+        <item>Bugün olmadıysa, yarın olabilir.</item>
+        <item>Gerçek oyuncular asla pes etmez.</item>
+        <item>Başaracak gücünüz var, durmayın!</item>
+        <item>Kaybetmek, öğreniyor olduğunuz anlamına gelir.</item>
+        <item>Her deneme deneyim kazandırır!</item>
+        <item>Kedilerin bile kazanmak için birden fazla canı gerekir!</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>Bugün yeni bir şeyler denemek için harika bir gün!</item>
+        <item>Elinizden gelenin en iyisini yapın, gerisi kendiliğinden gelecektir.</item>
+        <item>Derin bir nefes… ve başlıyoruz!</item>
+        <item>Her oyun yeni bir fırsattır.</item>
+        <item>Macera başlıyor, tadını çıkarın!</item>
+        <item>Kendinize güvenin, yapabilirsiniz!</item>
+        <item>Bugün kendi rekorunuzu geçebilirsiniz.</item>
+        <item>Mükemmel anı beklemeyin, yaratın!</item>
+        <item>En iyi hamle, yapacağınız hamledir.</item>
+        <item>Kendinizi şaşırtmaya hazır olun!</item>
+        <item>Bugün bir kez daha parlamak için şansınız var.</item>
+        <item>Pratik, imkansızı mümkün kılar.</item>
+        <item>Gerçekten denerseniz hiçbir şey sizi durduramaz!</item>
+        <item>Enerjik başlayın, gururla bitirin.</item>
+        <item>Bu an sizin anınız, tadını çıkarın!</item>
+        <item>Yeni bir zorluk sizi bekliyor, haydi!</item>
+        <item>Büyük oyuncular ilk adımla başlar.</item>
+        <item>Eğlence başlamak üzere!</item>
+        <item>Sadece kazanmak için değil, tutkuyla oynayın.</item>
+        <item>Bugün ne kadar yetenekli olduğunuzu gösterebilirsiniz!</item>
+        <item>Oyun oynamak da gelişmenin bir yoludur.</item>
+        <item>Her denemede gelişmeye cesaret edin!</item>
+        <item>Her büyük başarı ilk denemeyle başlar.</item>
+        <item>Odaklanın ve zorluğun tadını çıkarın!</item>
+        <item>Bugün rekor kırma günü olabilir.</item>
+        <item>Güvenin, oynayın ve eğlenin!</item>
+        <item>Çaba her zaman iz bırakır.</item>
+        <item>Oyunun tadını çıkarın, gerisi gelir!</item>
+        <item>Bugün hayal ettiğinizden daha fazlasını başarabilirsiniz.</item>
+        <item>Güçlü başlayın ve gülümseyerek bitirin!</item>
+    </string-array>
+    <string name="msj_final_win">Bir sonraki oyunda kendinizi geçebilecek misiniz görelim! Yakında yeni seviyelerin tadını çıkaracaksınız.</string>
+
 </resources>

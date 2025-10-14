@@ -12,7 +12,7 @@ class HotAirBalloon(
     private val bitmap: Bitmap,
     val fromLeft: Boolean
 ) {
-    private val speed = 2f
+    private val speed = 2.5f
 
     fun update(deltaTime: Float) {
         if (fromLeft) x += speed * deltaTime * 30 else x -= speed * deltaTime * 30

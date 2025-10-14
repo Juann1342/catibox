@@ -12,7 +12,7 @@ class UFO(
     val fromLeft: Boolean,
     private val screenWidth: Int
 ) {
-    private val speed = 4f
+    private val speed = 4.8f
     var hasDroppedItem = false
 
     fun update(deltaTime: Float) {

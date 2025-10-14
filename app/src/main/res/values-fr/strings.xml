@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catibox</string>
+    <string name="game_over">Jeu terminé !</string>
+    <string name="score_game_over">Score : 0</string>
+    <string name="streak_game_over">Série max : 0</string>
+    <string name="high_score">Meilleur score : 0</string>
+    <string name="longest_streak">Plus longue série : 0</string>
+    <string name="play_again">Rejouer</string>
+    <string name="start">Démarrer !</string>
+    <string name="your_high_score">Votre meilleur score : 0</string>
+    <string name="your_longest_streak">Votre plus longue série : 0</string>
+    <string name="score_text">Score : %d</string>
+    <string name="max_streak_text">Série max : %d</string>
+    <string name="high_score_text">Meilleur score : %d</string>
+    <string name="high_streak_text">Plus longue série : %d</string>
+    <string name="new_high_score">Nouveau meilleur score !</string>
+    <string name="new_high_streak">Nouvelle plus longue série !</string>
+    <string name="score_canvas">Score : %d</string>
+    <string name="streak_canvas">Série : %d (Max : %d)</string>
+    <string name="lives_text">VIES : %d</string>
+    <string name="level_text">NIVEAU %d</string>
+    <string name="paused_text">PAUSE</string>
+    <string name="your_high_score_k">Votre meilleur score : %d</string>
+    <string name="your_longest_streak_k">Votre plus longue série : %d</string>
+    <string name="last_level_dialog_title">Dernier niveau</string>
+    <string name="last_level_dialog_msj">Vous avez atteint le dernier niveau de ce monde ! Profitez de 10 vies supplémentaires en récompense.</string>
+    <string name="last_level_dialog_ok">OK</string>
+    <string name="no_ads_available_dialog_title">Annonce non disponible</string>
+    <string name="no_ads_available_dialog_msj">Aucune annonce n\'est disponible pour le moment. Veuillez réessayer plus tard.</string>
+    <string name="no_ads_available_dialog_ok">OK</string>
+    <string name="level_text_game_over">Niveau atteint : %d</string>
+    <string name="level_game_over">Niveau atteint : 0</string>
+    <string name="privacy_settings">Paramètres de confidentialité</string>
+    <string name="privacy_settings_cancel">Annuler</string>
+    <string name="privacy_settings_menu">Menu</string>
+    <string name="privacy_settings_privacy">Confidentialité</string>
+    <string name="privacy_settings_no_apply">Cette option ne s\'applique qu\'aux utilisateurs des États-Unis et d\'Europe. Votre confidentialité est déjà automatiquement protégée dans votre région.</string>
+    <string name="privacy_settings_no_ok">OK</string>
+    <string name="try_current_level">Continuer ce niveau (1 vie)</string>
+    <string name="try_next_level">Passer au niveau suivant (3 vies)</string>
+    <string name="game_finish">Vous avez terminé le jeu !</string>
+
+    <string-array name="phrase_finish_win">
+        <item>Super ! Vous avez terminé le jeu et montré vos compétences.</item>
+        <item>Félicitations ! Tous vos efforts ont payé.</item>
+        <item>Vous l\'avez fait ! Votre persévérance vous a mené jusqu\'ici.</item>
+        <item>Excellent travail ! Ce succès est entièrement à vous.</item>
+        <item>Impressionnant ! Vous avez réussi le jeu avec brio.</item>
+        <item>Brillant ! Chaque étape vous a rapproché de la victoire.</item>
+        <item>Super ! Vous avez surmonté tous les défis.</item>
+        <item>Vous l\'avez fait ! Votre constance et votre dévouement ont porté leurs fruits.</item>
+        <item>Victoire ! Profitez de ce succès, vous l\'avez mérité.</item>
+        <item>Félicitations ! Vous avez terminé le jeu avec succès.</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>Ne lâchez pas, vous êtes sur la bonne voie !</item>
+        <item>Chaque tentative vous rapproche du succès.</item>
+        <item>Les grands résultats commencent par de petits pas.</item>
+        <item>Allez ! La prochaine fois, vous y arriverez.</item>
+        <item>Perdre fait partie de l\'apprentissage.</item>
+        <item>On ne gagne pas sans réessayer.</item>
+        <item>Respirez profondément et essayez encore.</item>
+        <item>Même les meilleurs ont échoué avant de réussir.</item>
+        <item>Ce n\'est pas la fin, c\'est une nouvelle opportunité.</item>
+        <item>Chaque partie vous améliore !</item>
+        <item>Les chats retombent toujours sur leurs pattes, vous le pouvez aussi !</item>
+        <item>Excellent effort ! Continuez ainsi.</item>
+        <item>Une chute n\'est pas une défaite.</item>
+        <item>Essayez encore, vous pouvez y arriver !</item>
+        <item>Apprendre, c\'est réessayer.</item>
+        <item>Chaque défaite laisse une leçon précieuse.</item>
+        <item>Vous êtes plus proche que vous ne le pensez !</item>
+        <item>Ne lâchez pas maintenant, la prochaine sera la vôtre.</item>
+        <item>La pratique rend parfait.</item>
+        <item>Encore un essai et vous réussirez !</item>
+        <item>Votre progression vaut plus que la victoire.</item>
+        <item>Votre effort se voit, continuez !</item>
+        <item>Tomber va bien, se relever est essentiel.</item>
+        <item>N\'oubliez pas de vous amuser, même quand vous échouez !</item>
+        <item>Aujourd\'hui n\'était pas le bon jour, mais demain pourrait l\'être.</item>
+        <item>Les vrais joueurs n\'abandonnent jamais.</item>
+        <item>Vous avez ce qu\'il faut, ne vous arrêtez pas !</item>
+        <item>Perdre signifie simplement que vous apprenez.</item>
+        <item>Chaque tentative apporte de l\'expérience !</item>
+        <item>Même les chats ont besoin de plus d\'une vie pour gagner !</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>Aujourd\'hui est un excellent jour pour essayer quelque chose de nouveau !</item>
+        <item>Faites de votre mieux, le reste viendra naturellement.</item>
+        <item>Respirez profondément… et jouez !</item>
+        <item>Chaque partie est une nouvelle opportunité.</item>
+        <item>L\'aventure commence, faites-la compter !</item>
+        <item>Croyez en vous, vous pouvez le faire !</item>
+        <item>Aujourd\'hui, vous pouvez battre votre propre record.</item>
+        <item>N\'attendez pas le moment parfait, créez-le !</item>
+        <item>Le meilleur coup est celui que vous êtes sur le point de faire.</item>
+        <item>Préparez-vous à vous surprendre !</item>
+        <item>Aujourd\'hui, vous avez une autre chance de briller.</item>
+        <item>La pratique rend possible l\'impossible.</item>
+        <item>Rien ne peut vous arrêter lorsque vous vous donnez à fond !</item>
+        <item>Commencez fort, terminez avec fierté.</item>
+        <item>C\'est votre moment, profitez-en !</item>
+        <item>Un nouveau défi vous attend, allons-y !</item>
+        <item>Les grands joueurs commencent par un pas.</item>
+        <item>Le plaisir est sur le point de commencer !</item>
+        <item>Faites-le avec passion, pas seulement pour gagner.</item>
+        <item>Aujourd\'hui, vous pouvez montrer de quoi vous êtes capable !</item>
+        <item>Jouer est aussi un moyen de grandir.</item>
+        <item>Osez vous améliorer à chaque essai !</item>
+        <item>Chaque grande réussite commence par une première tentative.</item>
+        <item>Concentrez-vous et profitez du défi !</item>
+        <item>Aujourd\'hui pourrait être le jour où vous battez votre record.</item>
+        <item>Faites-vous confiance, jouez et amusez-vous !</item>
+        <item>L\'effort laisse toujours sa marque.</item>
+        <item>Profitez du jeu, le reste suivra !</item>
+        <item>Aujourd\'hui, vous pouvez accomplir plus que vous ne l\'imaginez.</item>
+        <item>Commencez fort et terminez avec le sourire !</item>
+    </string-array>
+    <string name="msj_final_win">Voyons si vous pouvez vous surpasser lors de la prochaine partie ! Bientôt, vous pourrez profiter de nouveaux niveaux.</string>
+
+</resources>

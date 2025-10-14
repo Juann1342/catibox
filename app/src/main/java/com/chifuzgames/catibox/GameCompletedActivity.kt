@@ -9,13 +9,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.chifuzgames.catibox.managers.PhraseManager
 
 class GameCompletedActivity : AppCompatActivity() {
+    private lateinit var tvPhraseWin: TextView
+
+    val phraseManager = PhraseManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_game_completed)
+
+        tvPhraseWin = findViewById(R.id.tvPhraseWin)
+        updatePhrase()
 
         // Ajuste de insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -39,8 +46,8 @@ class GameCompletedActivity : AppCompatActivity() {
         val newHighStreak = intent.getBooleanExtra("NEW_HIGH_STREAK", false)
 
         // Mostrar en layout
-        findViewById<TextView>(R.id.tvScore).text = "Score: $score"
-        findViewById<TextView>(R.id.tvMaxStreak).text = "Max Streak: $maxStreak"
+        findViewById<TextView>(R.id.tvScore).text = getString(R.string.score_text, score)
+        findViewById<TextView>(R.id.tvMaxStreak).text = getString(R.string.max_streak_text, maxStreak)
 
         if (newHighScore) {
             findViewById<TextView>(R.id.tvHighScore).visibility = View.VISIBLE
@@ -48,6 +55,9 @@ class GameCompletedActivity : AppCompatActivity() {
         if (newHighStreak) {
             findViewById<TextView>(R.id.tvHighStreak).visibility = View.VISIBLE
         }
+    }
+    private fun updatePhrase(){
+        tvPhraseWin.text = phraseManager.getStartPhrase()
     }
 }
 

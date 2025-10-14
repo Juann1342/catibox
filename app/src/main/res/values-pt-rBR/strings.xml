@@ -23,4 +23,107 @@
     <string name="paused_text">PAUSADO</string>
     <string name="your_high_score_k">🚀 Seu recorde: %d</string>
     <string name="your_longest_streak_k">🔥 Sua maior sequência: %d</string>
+
+    <string name="last_level_dialog_title">Último nível</string>
+    <string name="last_level_dialog_msj">Você chegou ao último nível deste mundo! Aproveite 10 vidas extras como recompensa.</string>
+    <string name="last_level_dialog_ok">OK</string>
+
+    <string name="no_ads_available_dialog_title">Anúncio não disponível</string>
+    <string name="no_ads_available_dialog_msj">Não há anúncios disponíveis no momento. Por favor, tente mais tarde.</string>
+    <string name="no_ads_available_dialog_ok">OK</string>
+
+    <string name="level_text_game_over">Nível alcançado: %d</string>
+    <string name="level_game_over">Nível alcançado: 0</string>
+
+    <string name="privacy_settings">Configurações de privacidade</string>
+    <string name="privacy_settings_cancel">Cancelar</string>
+    <string name="privacy_settings_menu">Menu</string>
+    <string name="privacy_settings_privacy">Privacidade</string>
+    <string name="privacy_settings_no_apply">Esta opção aplica-se apenas a usuários dos EUA e Europa. Sua privacidade já está protegida automaticamente na sua região.</string>
+    <string name="privacy_settings_no_ok">OK</string>
+
+    <string name="try_current_level">Continuar neste nível (1 vida)</string>
+    <string name="try_next_level">Pular para o próximo nível (3 vidas)</string>
+    <string name="game_finish">Você concluiu o jogo!</string>
+
+    <string-array name="phrase_finish_win">
+        <item>Incrível! Você completou o jogo mostrando suas habilidades.</item>
+        <item>Parabéns! Todo esforço valeu a pena.</item>
+        <item>Você conseguiu! Sua perseverança te trouxe até aqui.</item>
+        <item>Excelente! Esta conquista é toda sua.</item>
+        <item>Impressionante! Você completou o jogo com sucesso.</item>
+        <item>Brilhante! Cada passo te aproximou da vitória.</item>
+        <item>Genial! Você superou todos os desafios.</item>
+        <item>Você conseguiu! Sua constância e dedicação deram frutos.</item>
+        <item>Vitória! Aproveite esta conquista, você merece.</item>
+        <item>Parabéns! Você terminou o jogo com grande sucesso.</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>Não desista, você está no caminho certo!</item>
+        <item>Cada tentativa te aproxima do sucesso.</item>
+        <item>Grandes conquistas começam com pequenos passos.</item>
+        <item>Vamos! Na próxima você consegue.</item>
+        <item>Perder também faz parte do aprendizado.</item>
+        <item>Não se consegue nada sem tentar mais uma vez.</item>
+        <item>Respire fundo e tente novamente.</item>
+        <item>Até os melhores falharam antes de triunfar.</item>
+        <item>Não é o fim, é uma nova oportunidade.</item>
+        <item>Você melhora a cada partida!</item>
+        <item>Os gatos sempre caem de pé, você também pode!</item>
+        <item>Excelente esforço! Continue assim.</item>
+        <item>Um tropeço não é uma queda definitiva.</item>
+        <item>Tente de novo, você pode superar!</item>
+        <item>Aprender é tentar de novo.</item>
+        <item>Cada derrota deixa uma lição valiosa.</item>
+        <item>Você está mais perto do que imagina!</item>
+        <item>Não desista agora, a próxima é sua.</item>
+        <item>A prática leva à perfeição.</item>
+        <item>Mais uma e você consegue!</item>
+        <item>Seu progresso vale mais que a vitória.</item>
+        <item>Seu esforço é visível, continue!</item>
+        <item>Cair é normal, levantar é o importante.</item>
+        <item>Não se esqueça de se divertir, mesmo quando erra!</item>
+        <item>Hoje não foi, mas amanhã pode ser.</item>
+        <item>Jogadores de verdade nunca desistem.</item>
+        <item>Você tem o que é preciso, não pare!</item>
+        <item>Perder significa que você está aprendendo.</item>
+        <item>Cada tentativa soma experiência!</item>
+        <item>Até os gatos precisam de mais de uma vida para vencer!</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>Hoje é um ótimo dia para tentar algo novo!</item>
+        <item>Dê o seu melhor, o resto virá naturalmente.</item>
+        <item>Respire fundo… e jogue!</item>
+        <item>Cada partida é uma nova oportunidade.</item>
+        <item>A aventura começa, faça valer a pena!</item>
+        <item>Confie em você, você consegue!</item>
+        <item>Hoje você pode superar seu próprio recorde.</item>
+        <item>Não espere o momento perfeito, crie-o!</item>
+        <item>O melhor movimento é o que você está prestes a fazer.</item>
+        <item>Prepare-se para se surpreender!</item>
+        <item>Hoje você tem mais uma chance de brilhar.</item>
+        <item>A prática transforma o impossível em possível.</item>
+        <item>Nada pode te parar quando você tenta de verdade!</item>
+        <item>Comece com energia, termine com orgulho.</item>
+        <item>Este é o seu momento, aproveite!</item>
+        <item>Um novo desafio te espera, vamos!</item>
+        <item>Grandes jogadores começam dando um passo.</item>
+        <item>A diversão está prestes a começar!</item>
+        <item>Faça com paixão, não apenas para ganhar.</item>
+        <item>Hoje você pode mostrar do que é capaz!</item>
+        <item>Jogar também é uma forma de crescer.</item>
+        <item>Ouse melhorar a cada tentativa!</item>
+        <item>Todo grande feito começa com a primeira tentativa.</item>
+        <item>Concentre-se e aproveite o desafio!</item>
+        <item>Hoje pode ser o dia de bater seu recorde.</item>
+        <item>Confie, jogue e divirta-se!</item>
+        <item>O esforço sempre deixa sua marca.</item>
+        <item>Aproveite o jogo, o resto virá depois!</item>
+        <item>Hoje você pode alcançar mais do que imagina.</item>
+        <item>Comece forte e termine com um sorriso!</item>
+    </string-array>
+    <string name="msj_final_win">Vamos ver se na próxima partida você consegue se superar! Em breve você poderá aproveitar novos níveis.</string>
+
 </resources>

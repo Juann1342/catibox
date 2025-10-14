@@ -23,4 +23,107 @@
     <string name="paused_text">일시정지</string>
     <string name="your_high_score_k">🚀 당신의 최고 점수: %d</string>
     <string name="your_longest_streak_k">🔥 당신의 최장 연속: %d</string>
+
+    <string name="last_level_dialog_title">最終レベル</string>
+    <string name="last_level_dialog_msj">このワールドの最終レベルに到達しました！報酬としてライフを10個追加で獲得。</string>
+    <string name="last_level_dialog_ok">OK</string>
+
+    <string name="no_ads_available_dialog_title">広告は利用できません</string>
+    <string name="no_ads_available_dialog_msj">現在、広告は利用できません。後で再試行してください。</string>
+    <string name="no_ads_available_dialog_ok">OK</string>
+
+    <string name="level_text_game_over">到達レベル: %d</string>
+    <string name="level_game_over">到達レベル: 0</string>
+
+    <string name="privacy_settings">プライバシー設定</string>
+    <string name="privacy_settings_cancel">キャンセル</string>
+    <string name="privacy_settings_menu">メニュー</string>
+    <string name="privacy_settings_privacy">プライバシー</string>
+    <string name="privacy_settings_no_apply">このオプションは米国およびヨーロッパのユーザーにのみ適用されます。あなたの地域ではプライバシーは自動的に保護されています。</string>
+    <string name="privacy_settings_no_ok">OK</string>
+
+    <string name="try_current_level">このレベルを続ける（ライフ1個）</string>
+    <string name="try_next_level">次のレベルに進む（ライフ3個）</string>
+    <string name="game_finish">ゲームをクリアしました！</string>
+
+    <string-array name="phrase_finish_win">
+        <item>すごい！ゲームをクリアしてスキルを見せました。</item>
+        <item>おめでとう！すべての努力が報われました。</item>
+        <item>やったね！あなたの忍耐力がここまで導きました。</item>
+        <item>素晴らしい！この成果はあなたのものです。</item>
+        <item>印象的！ゲームを無事にクリアしました。</item>
+        <item>見事！一歩一歩が勝利に近づけました。</item>
+        <item>よくやった！すべての挑戦を乗り越えました。</item>
+        <item>やったね！継続と努力が実を結びました。</item>
+        <item>勝利！この達成を楽しんで、あなたはそれに値します。</item>
+        <item>おめでとう！ゲームを大成功で終えました。</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>諦めないで、順調に進んでいます！</item>
+        <item>挑戦するたびに成功に近づきます。</item>
+        <item>大きな成果は小さな一歩から始まります。</item>
+        <item>さあ！次は成功するでしょう。</item>
+        <item>失敗も学びの一部です。</item>
+        <item>もう一度挑戦しないと勝てません。</item>
+        <item>深呼吸して再挑戦しましょう。</item>
+        <item>トッププレイヤーでも失敗してから成功しています。</item>
+        <item>これで終わりではなく、新しいチャンスです。</item>
+        <item>ゲームごとに成長しています！</item>
+        <item>猫はいつも足から着地します、あなたもできます！</item>
+        <item>素晴らしい努力です！その調子で。</item>
+        <item>つまづきは最終的な失敗ではありません。</item>
+        <item>もう一度挑戦すれば、クリアできます！</item>
+        <item>学ぶことは再挑戦することです。</item>
+        <item>敗北から貴重な教訓を学びます。</item>
+        <item>思ったよりも近くに目標があります！</item>
+        <item>今諦めないで、次はあなたの番です。</item>
+        <item>練習は上達の鍵です。</item>
+        <item>あと一回で成功します！</item>
+        <item>進歩は勝利よりも大切です。</item>
+        <item>努力が現れています、続けましょう！</item>
+        <item>転んでも立ち上がることが大事です。</item>
+        <item>失敗しても楽しむことを忘れないで！</item>
+        <item>今日ダメでも、明日はチャンスがあります。</item>
+        <item>本当のプレイヤーは決して諦めません。</item>
+        <item>あなたにはそれができる力があります、止まらないで！</item>
+        <item>負けることは学んでいる証拠です。</item>
+        <item>挑戦は経験を積むことです！</item>
+        <item>猫でも勝つには1つ以上の命が必要です！</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>今日は新しいことに挑戦する絶好の日です！</item>
+        <item>全力を尽くせば、あとは自然とついてきます。</item>
+        <item>深呼吸して…さあプレイ！</item>
+        <item>毎回のゲームは新しいチャンスです。</item>
+        <item>冒険の始まりです、思いっきり楽しもう！</item>
+        <item>自分を信じて、君ならできる！</item>
+        <item>今日は自己記録を超えるチャンスです。</item>
+        <item>完璧な瞬間を待たず、自分で作ろう！</item>
+        <item>次の一手が最高の一手です。</item>
+        <item>自分自身を驚かせる準備をしよう！</item>
+        <item>今日も輝くチャンスがあります。</item>
+        <item>練習で不可能を可能にします。</item>
+        <item>本気で挑めば、何も止められません！</item>
+        <item>元気に始めて、誇りを持って終えよう。</item>
+        <item>これが君の瞬間、楽しんで！</item>
+        <item>新しい挑戦が待っています、行こう！</item>
+        <item>偉大なプレイヤーはまず一歩から。</item>
+        <item>楽しみが始まろうとしています！</item>
+        <item>勝つためだけでなく、情熱を持ってやろう。</item>
+        <item>今日、君の実力を見せるチャンス！</item>
+        <item>遊ぶことも成長の一部です。</item>
+        <item>挑戦ごとに上達しよう！</item>
+        <item>すべての偉大な成果は最初の挑戦から始まります。</item>
+        <item>集中して、チャレンジを楽しもう！</item>
+        <item>今日は記録更新の日かもしれません。</item>
+        <item>信じて、遊んで、楽しもう！</item>
+        <item>努力は必ず成果を残します。</item>
+        <item>ゲームを楽しめば、あとは自然とついてきます！</item>
+        <item>今日は思った以上のことを成し遂げられる日です。</item>
+        <item>全力で始めて、笑顔で終えよう！</item>
+    </string-array>
+    <string name="msj_final_win">次のゲームで自分を超えられるか見てみましょう！まもなく新しいステージを楽しめます。</string>
+
 </resources>

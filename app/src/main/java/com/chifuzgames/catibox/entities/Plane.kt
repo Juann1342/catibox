@@ -12,7 +12,7 @@ class Plane(
     private val bitmap: Bitmap
 )
  {
-    private val speed = 4f
+    private val speed = 4.5f
     var hasDroppedItem = false
 
     fun update(deltaTime: Float) {

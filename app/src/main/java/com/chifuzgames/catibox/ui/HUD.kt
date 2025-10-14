@@ -127,7 +127,7 @@ class HUD(private val context: Context) {
         // Level transition
         if (levelTransition) {
             val total = 90f
-            val elapsed = (total - levelTransitionTimer.toFloat()).coerceAtLeast(0f)
+            val elapsed = (total - levelTransitionTimer).coerceAtLeast(0f)
             val progress = (elapsed / total).coerceIn(0f, 1f)
             levelPaint.alpha = ((1f - progress) * 255).toInt().coerceIn(0, 255)
             val cx = screenWidth / 2f

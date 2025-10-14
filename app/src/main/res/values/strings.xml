@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Catibox</string>
     <string name="game_over">Game Over</string>
@@ -16,10 +17,107 @@
     <string name="new_high_score">&#x1F389; New High Score!</string>
     <string name="new_high_streak">&#x1F525; New Longest Streak!</string>
     <string name="score_canvas">Score: %d</string>
-    <string name="streak_canvas">Streak: %d  (Max: %d)</string>
+    <string name="streak_canvas">Streak: %d (Max: %d)</string>
     <string name="lives_text">LIVES: %d</string>
     <string name="level_text">LEVEL %d</string>
     <string name="paused_text">PAUSED</string>
     <string name="your_high_score_k">&#x1F680; Your High Score %d</string>
     <string name="your_longest_streak_k">&#x1F525; Your Longest Streak %d</string>
+    <string name="last_level_dialog_title">Last Level</string>
+    <string name="last_level_dialog_msj">You\'ve reached the final level of this world! Enjoy 10 extra lives as a reward.</string>
+    <string name="last_level_dialog_ok">OK</string>
+    <string name="no_ads_available_dialog_title">Ad Not Available</string>
+    <string name="no_ads_available_dialog_msj">No ads are available at the moment. Please try again later.</string>
+    <string name="no_ads_available_dialog_ok">OK</string>
+    <string name="level_text_game_over">Level Reached: %d</string>
+    <string name="level_game_over">Level Reached: 0</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="privacy_settings_cancel">Cancel</string>
+    <string name="privacy_settings_menu">Menu</string>
+    <string name="privacy_settings_privacy">Privacy</string>
+    <string name="privacy_settings_no_apply">This option only applies to users in the US and Europe. Your privacy is already automatically protected in your region.</string>
+    <string name="privacy_settings_no_ok">OK</string>
+    <string name="try_current_level">Continue this level (1 life)</string>
+    <string name="try_next_level">Skip to next level (3 lives)</string>
+    <string name="game_finish">You\'ve completed the game!</string>
+
+    <string-array name="phrase_finish_win">
+        <item>Awesome! You finished the game and showed your skill.</item>
+        <item>Congratulations! Every effort paid off.</item>
+        <item>You did it! Your perseverance got you here.</item>
+        <item>Great job! This achievement is all yours.</item>
+        <item>Impressive! You successfully completed the game.</item>
+        <item>Brilliant! Every step brought you closer to victory.</item>
+        <item>Well done! You overcame all challenges.</item>
+        <item>You did it! Your consistency and dedication paid off.</item>
+        <item>Victory! Enjoy this achievement—you earned it.</item>
+        <item>Congrats! You finished the game with flying colors.</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>Don\'t give up, you\'re on the right track!</item>
+        <item>Every attempt brings you closer to success.</item>
+        <item>Great achievements start with small steps.</item>
+        <item>Keep going! You\'ll get it next time.</item>
+        <item>Losing is also part of learning.</item>
+        <item>You can\'t win without trying again.</item>
+        <item>Take a deep breath and try again.</item>
+        <item>Even the best failed before succeeding.</item>
+        <item>It\'s not the end, it\'s a new opportunity.</item>
+        <item>You improve with each game!</item>
+        <item>Cats always land on their feet—you can too!</item>
+        <item>Excellent effort! Keep it up.</item>
+        <item>A stumble is not a fall.</item>
+        <item>Try again, you can beat it!</item>
+        <item>Learning is trying again.</item>
+        <item>Every defeat leaves a lesson.</item>
+        <item>You\'re closer than you think!</item>
+        <item>Don\'t give up now, next time is yours.</item>
+        <item>Practice makes perfect.</item>
+        <item>One more try and you\'ll get it!</item>
+        <item>Your progress is more important than victory.</item>
+        <item>Your effort shows, keep going!</item>
+        <item>Falling is fine, getting up is key.</item>
+        <item>Don\'t forget to have fun, even when you fail!</item>
+        <item>Today wasn\'t it, but tomorrow could be.</item>
+        <item>True players never quit.</item>
+        <item>You have what it takes, don\'t stop!</item>
+        <item>Losing just means you\'re learning.</item>
+        <item>Every attempt adds experience!</item>
+        <item>Even cats need more than one life to win!</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>Today is a great day to achieve something new!</item>
+        <item>Give your best, the rest will come naturally.</item>
+        <item>Take a deep breath… and play!</item>
+        <item>Every game is a new opportunity.</item>
+        <item>The adventure begins, make it count!</item>
+        <item>Believe in yourself, you can do it!</item>
+        <item>Today you can beat your own record.</item>
+        <item>Don\'t wait for the perfect moment, create it!</item>
+        <item>The best move is the one you\'re about to make.</item>
+        <item>Get ready to surprise yourself!</item>
+        <item>Today is another chance to shine.</item>
+        <item>Practice makes the impossible possible.</item>
+        <item>Nothing can stop you when you try seriously!</item>
+        <item>Start strong, finish proud.</item>
+        <item>This is your moment, enjoy it!</item>
+        <item>A new challenge awaits, let\'s go!</item>
+        <item>Great players start by taking a step.</item>
+        <item>Fun is about to begin!</item>
+        <item>Do it with passion, not just to win.</item>
+        <item>Today you can show what you\'re made of!</item>
+        <item>Playing is also a way to grow.</item>
+        <item>Dare to improve with each try!</item>
+        <item>Every great achievement begins with a first attempt.</item>
+        <item>Focus and enjoy the challenge!</item>
+        <item>Today might be the day you break your record.</item>
+        <item>Trust yourself, play, and have fun!</item>
+        <item>Effort always leaves its mark.</item>
+        <item>Enjoy the game, the rest will follow!</item>
+        <item>Today you can achieve more than you think.</item>
+        <item>Start strong and finish with a smile!</item>
+    </string-array>
+    <string name="msj_final_win">Let’s see if you can beat yourself in the next game! Soon you’ll enjoy new levels.</string>
 </resources>

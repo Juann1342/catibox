@@ -15,7 +15,7 @@ class GameThread(private val surfaceHolder: SurfaceHolder, private val gameView:
     }
 
 
-    // 🧨 Nuevo método: detiene el juego por completo (Game Over)
+    //  detiene el juego por completo (Game Over)
     fun stopCompletely() {
         running = false
         // Forzamos interrupción del hilo por si está dormido en sleep()

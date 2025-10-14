@@ -23,4 +23,107 @@
     <string name="paused_text">일시정지</string>
     <string name="your_high_score_k">🚀 당신의 최고 점수: %d</string>
     <string name="your_longest_streak_k">🔥 당신의 최장 연속: %d</string>
+
+    <string name="last_level_dialog_title">마지막 레벨</string>
+    <string name="last_level_dialog_msj">이 월드의 마지막 레벨에 도달했습니다! 보상으로 추가 생명 10개를 드립니다.</string>
+    <string name="last_level_dialog_ok">확인</string>
+
+    <string name="no_ads_available_dialog_title">광고를 이용할 수 없습니다</string>
+    <string name="no_ads_available_dialog_msj">현재 이용 가능한 광고가 없습니다. 나중에 다시 시도해주세요.</string>
+    <string name="no_ads_available_dialog_ok">확인</string>
+
+    <string name="level_text_game_over">도달한 레벨: %d</string>
+    <string name="level_game_over">도달한 레벨: 0</string>
+
+    <string name="privacy_settings">개인정보 설정</string>
+    <string name="privacy_settings_cancel">취소</string>
+    <string name="privacy_settings_menu">메뉴</string>
+    <string name="privacy_settings_privacy">개인정보</string>
+    <string name="privacy_settings_no_apply">이 옵션은 미국 및 유럽 사용자에게만 적용됩니다. 귀하의 지역에서는 개인정보가 자동으로 보호됩니다.</string>
+    <string name="privacy_settings_no_ok">확인</string>
+
+    <string name="try_current_level">현재 레벨 계속하기 (생명 1개)</string>
+    <string name="try_next_level">다음 레벨로 이동 (생명 3개)</string>
+    <string name="game_finish">게임을 완료했습니다!</string>
+
+    <string-array name="phrase_finish_win">
+        <item>대단해요! 게임을 완료하고 실력을 보여주었어요.</item>
+        <item>축하합니다! 모든 노력이 결실을 맺었어요.</item>
+        <item>해냈어요! 인내심이 여기까지 이끌었네요.</item>
+        <item>훌륭해요! 이 성취는 전적으로 당신의 것입니다.</item>
+        <item>인상적이에요! 게임을 성공적으로 완료했어요.</item>
+        <item>멋져요! 한 걸음 한 걸음이 승리로 다가가게 했어요.</item>
+        <item>정말 잘했어요! 모든 도전을 극복했어요.</item>
+        <item>해냈네요! 꾸준함과 헌신이 결실을 맺었어요.</item>
+        <item>승리! 이 성취를 즐기세요, 당신은 그럴 자격이 있어요.</item>
+        <item>축하합니다! 게임을 큰 성공으로 마쳤어요.</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>포기하지 마세요, 잘하고 있어요!</item>
+        <item>각 시도가 성공으로 더 가까워지게 해요.</item>
+        <item>큰 성취는 작은 발걸음에서 시작됩니다.</item>
+        <item>힘내요! 다음에는 성공할 거예요.</item>
+        <item>실패도 배움의 일부예요.</item>
+        <item>한 번 더 도전하지 않으면 이길 수 없어요.</item>
+        <item>심호흡하고 다시 도전하세요.</item>
+        <item>최고의 플레이어도 성공하기 전에 실패했어요.</item>
+        <item>끝이 아니에요, 새로운 기회입니다.</item>
+        <item>게임을 할수록 발전하고 있어요!</item>
+        <item>고양이는 항상 발로 착지해요, 당신도 할 수 있어요!</item>
+        <item>훌륭한 노력이에요! 계속 이렇게 하세요.</item>
+        <item>넘어져도 끝이 아니에요.</item>
+        <item>다시 도전하면 극복할 수 있어요!</item>
+        <item>배운다는 것은 다시 시도하는 거예요.</item>
+        <item>각 패배는 소중한 교훈을 남깁니다.</item>
+        <item>생각보다 목표에 가까워요!</item>
+        <item>지금 포기하지 마세요, 다음은 당신 차례예요.</item>
+        <item>연습이 실력을 만듭니다.</item>
+        <item>한 번만 더 도전하면 성공할 거예요!</item>
+        <item>진전이 승리보다 중요해요.</item>
+        <item>당신의 노력은 보이고 있어요, 계속하세요!</item>
+        <item>넘어지는 건 괜찮아요, 중요한 건 일어나는 거예요.</item>
+        <item>실패해도 즐기는 걸 잊지 마세요!</item>
+        <item>오늘 안 되더라도, 내일은 가능할 수 있어요.</item>
+        <item>진정한 플레이어는 절대 포기하지 않아요.</item>
+        <item>당신은 해낼 수 있는 힘이 있어요, 멈추지 마세요!</item>
+        <item>패배는 배우고 있다는 의미예요.</item>
+        <item>각 시도가 경험을 쌓게 해요!</item>
+        <item>고양이도 한 생명만으로는 승리할 수 없어요!</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>오늘은 새로운 것을 도전하기 좋은 날이에요!</item>
+        <item>최선을 다하면 나머지는 자연스럽게 따라와요.</item>
+        <item>심호흡… 시작해요!</item>
+        <item>각 게임은 새로운 기회입니다.</item>
+        <item>모험이 시작됩니다, 즐겨요!</item>
+        <item>자신을 믿으세요, 할 수 있어요!</item>
+        <item>오늘은 개인 기록을 깰 기회예요.</item>
+        <item>완벽한 순간을 기다리지 말고, 만들어보세요!</item>
+        <item>최고의 한 수는 지금 두는 거예요.</item>
+        <item>자신에게 놀랄 준비를 하세요!</item>
+        <item>오늘 또 한 번 빛날 기회가 있어요.</item>
+        <item>연습은 불가능을 가능으로 바꿔요.</item>
+        <item>정성을 다하면 어떤 것도 막을 수 없어요!</item>
+        <item>힘차게 시작하고 자랑스럽게 끝내요.</item>
+        <item>이 순간은 당신의 순간이에요, 즐기세요!</item>
+        <item>새로운 도전이 기다리고 있어요, 갑시다!</item>
+        <item>위대한 플레이어는 한 걸음부터 시작해요.</item>
+        <item>즐거움이 곧 시작돼요!</item>
+        <item>승리뿐 아니라 열정을 가지고 하세요.</item>
+        <item>오늘 당신의 실력을 보여줄 기회예요!</item>
+        <item>게임도 성장의 한 방법이에요.</item>
+        <item>매 시도마다 개선을 시도하세요!</item>
+        <item>모든 위대한 성취는 첫 도전에서 시작돼요.</item>
+        <item>집중하고 도전을 즐기세요!</item>
+        <item>오늘이 기록을 깰 날일지도 몰라요.</item>
+        <item>믿고, 플레이하고, 즐기세요!</item>
+        <item>노력은 항상 흔적을 남겨요.</item>
+        <item>게임을 즐기면 나머지는 자연스럽게 따라와요!</item>
+        <item>오늘은 상상 이상으로 성취할 수 있는 날이에요.</item>
+        <item>힘차게 시작하고 웃으며 마무리해요!</item>
+    </string-array>
+    <string name="msj_final_win">다음 게임에서 스스로를 뛰어넘을 수 있는지 볼까요? 곧 새로운 레벨을 즐길 수 있습니다.</string>
+
 </resources>

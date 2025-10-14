@@ -23,4 +23,107 @@
     <string name="paused_text">暂停</string>
     <string name="your_high_score_k">🚀 你的最高分: %d</string>
     <string name="your_longest_streak_k">🔥 你的最长连击: %d</string>
+
+    <string name="last_level_dialog_title">最后关卡</string>
+    <string name="last_level_dialog_msj">你已到达本世界的最后关卡！奖励 10 条额外生命。</string>
+    <string name="last_level_dialog_ok">确定</string>
+
+    <string name="no_ads_available_dialog_title">广告不可用</string>
+    <string name="no_ads_available_dialog_msj">当前没有可用广告，请稍后再试。</string>
+    <string name="no_ads_available_dialog_ok">确定</string>
+
+    <string name="level_text_game_over">达到关卡：%d</string>
+    <string name="level_game_over">达到关卡：0</string>
+
+    <string name="privacy_settings">隐私设置</string>
+    <string name="privacy_settings_cancel">取消</string>
+    <string name="privacy_settings_menu">菜单</string>
+    <string name="privacy_settings_privacy">隐私</string>
+    <string name="privacy_settings_no_apply">此选项仅适用于美国和欧洲用户。您所在地区的隐私已自动保护。</string>
+    <string name="privacy_settings_no_ok">确定</string>
+
+    <string name="try_current_level">继续当前关卡（1条生命）</string>
+    <string name="try_next_level">跳到下一关（3条生命）</string>
+    <string name="game_finish">你已完成游戏！</string>
+
+    <string-array name="phrase_finish_win">
+        <item>太棒了！你完成了游戏，展示了你的技巧。</item>
+        <item>恭喜！所有努力都值得。</item>
+        <item>你做到了！坚持让你走到这里。</item>
+        <item>干得漂亮！这个成就是你的。</item>
+        <item>令人印象深刻！你成功通关了游戏。</item>
+        <item>出色！每一步都让你更接近胜利。</item>
+        <item>太好了！你克服了所有挑战。</item>
+        <item>你做到了！你的恒心和努力得到了回报。</item>
+        <item>胜利！享受这个成就，你应得的。</item>
+        <item>恭喜！你成功完成了游戏。</item>
+    </string-array>
+
+    <string-array name="phrase_game_over">
+        <item>不要放弃，你走在正确的路上！</item>
+        <item>每一次尝试都让你更接近成功。</item>
+        <item>伟大的成就始于小小的步骤。</item>
+        <item>加油！下一次你会成功的。</item>
+        <item>失败也是学习的一部分。</item>
+        <item>不再尝试就无法成功。</item>
+        <item>深呼吸，再试一次。</item>
+        <item>即便是最强的人，也曾失败过。</item>
+        <item>这不是终点，而是新的机会。</item>
+        <item>每次游戏你都在进步！</item>
+        <item>猫总是落地生根，你也能做到！</item>
+        <item>出色的努力！继续加油。</item>
+        <item>一次小失误不算失败。</item>
+        <item>再试一次，你能克服！</item>
+        <item>学习就是不断尝试。</item>
+        <item>每次失败都会带来宝贵的经验。</item>
+        <item>你比想象的更接近目标！</item>
+        <item>现在不要放弃，下次就是你的机会。</item>
+        <item>熟能生巧。</item>
+        <item>再来一次，你就能成功！</item>
+        <item>进步比胜利更重要。</item>
+        <item>你的努力看得见，继续前进！</item>
+        <item>跌倒没关系，重要的是爬起来。</item>
+        <item>即使失败，也别忘了享受乐趣！</item>
+        <item>今天没成功，明天可能成功。</item>
+        <item>真正的玩家永不放弃。</item>
+        <item>你有能力，不要停下！</item>
+        <item>失败意味着你在学习。</item>
+        <item>每一次尝试都会积累经验！</item>
+        <item>连猫都需要多条命才能赢，你也一样！</item>
+    </string-array>
+
+    <string-array name="phrase_start_game">
+        <item>今天是尝试新事物的好日子！</item>
+        <item>尽力而为，其余自会水到渠成。</item>
+        <item>深呼吸……开始游戏！</item>
+        <item>每一局游戏都是新的机会。</item>
+        <item>冒险开始了，好好享受吧！</item>
+        <item>相信自己，你可以做到！</item>
+        <item>今天你可以打破自己的记录。</item>
+        <item>不要等待完美时刻，自己创造它！</item>
+        <item>最好的行动就是你即将做的行动。</item>
+        <item>准备好惊讶自己吧！</item>
+        <item>今天你又有机会闪耀。</item>
+        <item>练习让不可能成为可能。</item>
+        <item>认真尝试，没有什么能阻挡你！</item>
+        <item>充满能量地开始，以自豪结束。</item>
+        <item>这是你的时刻，好好享受！</item>
+        <item>一个新的挑战在等你，加油！</item>
+        <item>伟大的玩家从第一步开始。</item>
+        <item>快乐马上开始！</item>
+        <item>充满热情地玩，而不仅仅是为了胜利。</item>
+        <item>今天你可以展示你的实力！</item>
+        <item>玩游戏也是一种成长方式。</item>
+        <item>勇于在每次尝试中进步！</item>
+        <item>每个伟大的成就都始于第一次尝试。</item>
+        <item>专注并享受挑战！</item>
+        <item>今天可能是打破记录的一天。</item>
+        <item>相信自己，玩得开心！</item>
+        <item>努力总会留下痕迹。</item>
+        <item>享受游戏，其余自会到来！</item>
+        <item>今天你可以超越想象的自己。</item>
+        <item>充满力量地开始，带着笑容结束！</item>
+    </string-array>
+    <string name="msj_final_win">看看你能否在下一局超越自己！很快你就可以体验新的关卡了。</string>
+
 </resources>

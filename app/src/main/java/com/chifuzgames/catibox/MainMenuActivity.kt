@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.chifuzgames.catibox.managers.PhraseManager
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 
@@ -18,15 +19,22 @@ class MainMenuActivity : AppCompatActivity() {
     private lateinit var tvHighScore: TextView
     private lateinit var tvLongestStreak: TextView
 
+    private lateinit var tvPhraseInit: TextView
+
+    val phraseManager = PhraseManager(this)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
           requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         setContentView(R.layout.activity_main_menu)
 
+
         // Inicializamos los TextView
         tvHighScore = findViewById(R.id.tvYourHighScore)
         tvLongestStreak = findViewById(R.id.tvYourLongestStreak)
+        tvPhraseInit = findViewById(R.id.tvPhraseInit)
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)  // <-- esto habilita el menú
@@ -39,6 +47,7 @@ class MainMenuActivity : AppCompatActivity() {
 
         // Mostrar scores al iniciar
         updateScores()
+        updatePhrase()
         showPrivacyConsentIfNeeded()
 
     }
@@ -69,6 +78,10 @@ class MainMenuActivity : AppCompatActivity() {
         tvHighScore.text = getString(R.string.your_high_score_k, highScore)
         tvLongestStreak.text = getString(R.string.your_longest_streak_k, highStreak)
 
+    }
+
+    private fun updatePhrase(){
+        tvPhraseInit.text = phraseManager.getStartPhrase()
     }
 
     private fun showPrivacyConsentIfNeeded() {
@@ -108,16 +121,16 @@ class MainMenuActivity : AppCompatActivity() {
     }
 
     fun Activity.showSettingsDialog() {
-        val options = arrayOf("ajustes de privacidad") // se pueden agregar más opciones
+        val options = arrayOf(getString(R.string.privacy_settings)) // se pueden agregar más opciones
 
         AlertDialog.Builder(this)
-            .setTitle("privacidad")
+            .setTitle(getString(R.string.privacy_settings_menu))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> openPrivacyOptions()
                 }
             }
-            .setNegativeButton("cancelar", null)
+            .setNegativeButton(getString(R.string.privacy_settings_cancel), null)
             .show()
     }
 
@@ -147,16 +160,12 @@ class MainMenuActivity : AppCompatActivity() {
                     )
                 }else {
                     // No hay formulario disponible → mensaje
-                   /* AlertDialog.Builder(this)
+                    AlertDialog.Builder(this)
                         .setTitle(getString(R.string.privacy_settings_privacy))
                         .setMessage(getString(R.string.privacy_settings_no_apply))
                         .setPositiveButton(getString(R.string.privacy_settings_no_ok), null)
-                        .show()*/
-                     AlertDialog.Builder(this)
-                        .setTitle("Titulo de ejemplo privacidad")
-                        .setMessage("Este es un mensaje de los ajustes de privacidad")
-                        .setPositiveButton("ok", null)
                         .show()
+
                 }
             },
             { requestError ->

@@ -23,7 +23,7 @@ class GameActivity : AppCompatActivity() {
 
         val initialLives = intent.getIntExtra("INITIAL_LIVES", 5)
         val initialScore = intent.getIntExtra("INITIAL_SCORE", 0)
-        val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 1)
+        val initialLevel = intent.getIntExtra("INITIAL_LEVEL", 20)
 
 
         // Creamos GameView

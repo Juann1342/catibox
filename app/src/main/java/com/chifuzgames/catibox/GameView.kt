@@ -130,7 +130,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     // --- Niveles ---
     var level = 1
     private var catsSpawned = 0
-    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26,40,12, 14, 16,18,20,22,24,26,28, 200) // nivel 20 200
+    private val catsPerLevel = listOf(10, 12, 14, 16,18,20,22,24,26,50,14, 16, 18,20,22,24,26,28,30, 200) // nivel 20 200
     private var levelTransition = false
     private var levelTransitionTimer = 0f
 
@@ -177,7 +177,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
      var maxStreak = 0
 
     // --- Dificultad ajustable ---
-    // --- Dificultad ajustable ---
     private var initialLives = 5
     // Vidas iniciales del jugador al comenzar la partida.
     private var initialLevel = 1  // <--- nivel inicial configurable
@@ -191,26 +190,26 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     //cada cuantos gatos aumenta
 
     private val levelDifficulty = listOf(
-        Pair(0.6f, 110), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
-        Pair(1f, 80), // nivel 2: más rápido, menos intervalo
-        Pair(1.2f, 70), // nivel 3
-        Pair(1.5f, 50), // nivel 4
-        Pair(1.8f, 40),  // nivel 5
-        Pair(1.9f, 30),  // nivel 6
-        Pair(2.0f, 29),  // nivel 7
-        Pair(2.1f, 28),  // nivel 8
-        Pair(2.2f, 27),  // nivel 9
+        Pair(0.6f, 120), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(1f, 100), // nivel 2: más rápido, menos intervalo
+        Pair(1.2f, 90), // nivel 3
+        Pair(1.5f, 70), // nivel 4
+        Pair(1.8f, 60),  // nivel 5
+        Pair(1.9f, 50),  // nivel 6
+        Pair(2.0f, 45),  // nivel 7
+        Pair(2.1f, 40),  // nivel 8
+        Pair(2.2f, 30),  // nivel 9
         Pair(1f, 30),  // nivel 10+ bonus
-        Pair(1f, 80), // nivel 11
-        Pair(1.2f, 80), // nivel 12
-        Pair(1.5f, 70), // nivel 13
-        Pair(1.8f, 50), // nivel 14
-        Pair(1.9f, 40),  // nivel 15
-        Pair(2.0f, 30),  // nivel 16
-        Pair(2.1f, 29),  // nivel 17
-        Pair(2.2f, 28),  // nivel 18
-        Pair(2.3f, 27),  // nivel 19
-        Pair(2.8f, 15),  // nivel 20+ bonus
+        Pair(1.2f, 90), // nivel 11
+        Pair(1.5f, 80), // nivel 12
+        Pair(1.7f, 70), // nivel 13
+        Pair(1.9f, 60), // nivel 14
+        Pair(2.0f, 50),  // nivel 15
+        Pair(2.1f, 40),  // nivel 16
+        Pair(2.2f, 35),  // nivel 17
+        Pair(2.3f, 30),  // nivel 18
+        Pair(2.4f, 27),  // nivel 19
+        Pair(1.5f, 15),  // nivel 20+ bonus
 
     )
 
@@ -348,7 +347,6 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
         thread?.stopThread(true)
         thread?.start()
     }
-
 
     private fun getCatBitmapForWidth(width: Int): Bitmap {
         return catBitmapCache[width] ?: run {

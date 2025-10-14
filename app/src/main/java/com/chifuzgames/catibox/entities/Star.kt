@@ -15,8 +15,8 @@ class Star(
     private var speedX: Float = Random.nextFloat() * 20f - 10f
 
     fun update(deltaTime: Float, screenWidth: Int, screenHeight: Int) {
-        x += speedX * deltaTime * 20
-        y += speedY * deltaTime * 20
+        x += speedX * deltaTime * 25
+        y += speedY * deltaTime * 25
 
         if (x < 0f) { x = 0f; speedX = -speedX }
         if (x + width > screenWidth) { x = (screenWidth - width).toFloat(); speedX = -speedX }
