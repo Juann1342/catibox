@@ -190,7 +190,7 @@ class GameView(context: Context, attrs: AttributeSet? = null) : SurfaceView(cont
     //cada cuantos gatos aumenta
 
     private val levelDifficulty = listOf(
-        Pair(0.6f, 120), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
+        Pair(0.8f, 120), // nivel 1: velocidad base x1, intervalo . (dificultad inicial por nivel, cada cuanto aparece un gato)
         Pair(1f, 100), // nivel 2: más rápido, menos intervalo
         Pair(1.2f, 90), // nivel 3
         Pair(1.5f, 70), // nivel 4

@@ -52,14 +52,14 @@ android {
         create("prod") {
             dimension = "environment"
             applicationId = "com.chifuzgames.catibox"
-            versionCode = 21
-            versionName = "2.1"
+            versionCode = 22
+            versionName = "2.2"
 
             // IDs desde local.properties (modo producción)
-            val bannerId = localProperties.getProperty("BANNER_ID_PROD", "")
-            val admobAppId = localProperties.getProperty("ADMOB_APP_ID_PROD", "")
-            val interstitialId = localProperties.getProperty("INTERSTITIAL_ID_PROD", "")
-            val rewardedId = localProperties.getProperty("REWARDED_ID_PROD", "")
+            val bannerId = localProperties.getProperty("BANNER_ID", "")
+            val admobAppId = localProperties.getProperty("ADMOB_APP_ID", "")
+            val interstitialId = localProperties.getProperty("INTERSTITIAL_ID", "")
+            val rewardedId = localProperties.getProperty("REWARDED_ID", "")
 
             resValue("string", "admob_app_id", admobAppId)
             buildConfigField("String", "BANNER_ID", "\"$bannerId\"")

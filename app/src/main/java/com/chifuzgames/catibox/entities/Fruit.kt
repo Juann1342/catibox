@@ -15,8 +15,8 @@ class Fruit(
     private var speedX: Float = Random.nextFloat() * 20f - 10f
 
     fun update(deltaTime: Float, screenWidth: Int) {
-        x += speedX * deltaTime * 25
-        y += speedY * deltaTime * 25
+        x += speedX * deltaTime * 26
+        y += speedY * deltaTime * 26
 
         if (x < 0f) { x = 0f; speedX = -speedX }
         if (x + width > screenWidth) { x = (screenWidth - width).toFloat(); speedX = -speedX }

@@ -21,8 +21,8 @@ class Boot(
         val dx = targetX - x
         val dy = targetY - y
         val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
-        vx = dx / distance * speed *25
-        vy = dy / distance * speed *25
+        vx = dx / distance * speed *26
+        vy = dy / distance * speed *26
     }
 
     fun update(deltaTime: Float) {
