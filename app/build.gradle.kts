@@ -52,8 +52,8 @@ android {
         create("prod") {
             dimension = "environment"
             applicationId = "com.chifuzgames.catibox"
-            versionCode = 12
-            versionName = "1.2"
+            versionCode = 21
+            versionName = "2.1"
 
             // IDs desde local.properties (modo producción)
             val bannerId = localProperties.getProperty("BANNER_ID_PROD", "")

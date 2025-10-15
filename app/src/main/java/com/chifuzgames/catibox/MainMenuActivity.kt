@@ -120,6 +120,9 @@ class MainMenuActivity : AppCompatActivity() {
         )
     }
 
+
+
+
     fun Activity.showSettingsDialog() {
         val options = arrayOf(getString(R.string.privacy_settings)) // se pueden agregar más opciones
 
